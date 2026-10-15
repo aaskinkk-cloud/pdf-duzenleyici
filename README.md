@@ -24,4 +24,5 @@ Dosyalar yalnız cihazında işlenir; hiçbir sunucuya gönderilmez.
 
 ## Sürüm
 
-**1.0** — GitHub'a taşındı (Milli Emlak 124 ile birlikte).
+**1.1** — Metin düzenleme Okur'un PDF metin motoruyla: satıra **dokununca** (tıklayınca) düzenleme açılır (telefonda klavye ve odak daha güvenilir); yazı tipi, punto, kalın/italik (",B"/"-Bold" gibi adlar dahil), yazı ve zemin rengi otomatik algılanır; **hiç değiştirilmeyen satır kaydedilmez** — dokunulan ama değiştirilmeyen satır özgün hâliyle kalır, yerine benzer yazı tipiyle yeniden yazılmaz; ekrandaki satır aralığı kaydedilen PDF ile aynı.  
+1.0 — GitHub'a taşındı (Milli Emlak 124 ile birlikte).
