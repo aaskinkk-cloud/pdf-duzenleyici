@@ -1,5 +1,14 @@
 # PDF Düzenleyici
 
+## 1.7 (27.10.2026) — Metin düzenleme araçları, baskı önizleme, BelgeNet uyumu
+- Düzenlenen/eklenen metinde **tutamaklar** (köşeler orantılı büyütür-küçültür, ✥ taşır), **yön tuşlarıyla taşıma** (0,5 pt; Shift 5 pt; yazarken Alt+yön; panelde ◀▲▼▶).
+- **Yoğunluk** sürgüsü (sola soluk/şeffaf, sağa koyu; PDF'e de yazılır) ve **taranmış (tozlu) yazı** seçeneği (toz miktarı ayarlanır; PDF'te görsel olarak).
+- **Zemin rengi**: renk kutusu veya 💧 sayfadan seç. Eski yazıyı örten kutu **tablo çizgilerine binmez**; aynı satırdaki hücreler dikey çizgiden ayrılır; zemin rengi ince hücrede griye kaymaz.
+- **Geri al / İleri al** yazılı düğmeler; Ctrl+Z / Ctrl+Y metin yazarken de çalışır. **Çizgiler** düğmesi düzenleme çerçevelerini gizler.
+- **Baskı önizleme**: kaydedilecek PDF kağıt görünümünde; yalnız bu sayfa, yakınlaştırma, PDF olarak kaydet, Yazdır.
+- Sağ panel açılır-kapanır **bölümler** (Yazı · Görünüm · Zemin · Çizgi · Konum · Seçili nesne · Sayfa), durum hatırlanır.
+- Kaydedilen PDF **klasik xref** ile (nesne akışı yok) — BelgeNet önizlemesi için. Cloudflare Pages'te de çevrimdışı.
+
 ## 1.6 (23.10.2026) — Tam ekran düğmesi geri
 - Kurulu uygulamada gizlenen tam ekran düğmesi yeniden görünür ve çalışır. Düğmeye basınca Chrome kendi "Tam ekrandan çıkmak için…" uyarısını bir kez gösterir (tarayıcı kuralı). Dokununca kendiliğinden tam ekran isteği gönderilmez.
 

@@ -99,6 +99,46 @@ button{cursor:pointer;border:0;background:none}
 .obj.txt{white-space:pre;line-height:1.2;min-width:8px;min-height:1em;outline:1px dashed rgba(47,111,237,.5);padding:0}
 .obj.txt:focus{outline:2px solid var(--acc)}
 .obj img{width:100%;height:100%;display:block;pointer-events:none}
+.tk{position:absolute;pointer-events:none;border:1px dashed var(--acc);border-radius:3px;z-index:6}
+.tk-n{position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;border:2px solid var(--acc);pointer-events:auto;touch-action:none;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.tk-n::after{content:"";position:absolute;inset:-10px}
+.tk-n[data-y="-1,-1"]{left:-7px;top:-7px;cursor:nwse-resize}.tk-n[data-y="1,-1"]{right:-7px;top:-7px;cursor:nesw-resize}
+.tk-n[data-y="-1,1"]{left:-7px;bottom:-7px;cursor:nesw-resize}.tk-n[data-y="1,1"]{right:-7px;bottom:-7px;cursor:nwse-resize}
+.tk-tasi{position:absolute;left:50%;top:-30px;transform:translateX(-50%);width:26px;height:26px;border-radius:50%;background:var(--acc);color:#fff;font:700 15px/26px system-ui,sans-serif;text-align:center;pointer-events:auto;touch-action:none;cursor:move;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.tk-tasi::after{content:"";position:absolute;inset:-8px}
+.hb{width:auto!important;padding-left:8px;padding-right:10px;gap:4px}.hb-y{font-size:12px;font-weight:600}
+@media (max-width:520px){.hb-y{display:none}.hb{padding:0 6px}}
+#ov.temiz .obj.txt,#ov.temiz .obj.txt:focus,#ov.temiz .obj.sel{outline:none!important}#ov.temiz .tk{border-color:transparent}#ov.temiz .line-box{outline:none!important;border-color:transparent!important;box-shadow:none!important}
+#bCizgi[aria-pressed="true"]{background:var(--acc2);color:var(--acc)}
+.ok-sat{gap:6px;flex-wrap:wrap;align-items:center}.ok-sat .btn{width:38px;height:34px;justify-content:center;font-size:13px}
+.bk-arac{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}.bk-bos{flex:1}.bk-y{min-width:44px;text-align:center;font-size:13px}
+.bk-masa{background:#8a8f98;border-radius:10px;padding:24px;display:flex;flex-direction:column;align-items:center;gap:22px;min-height:60vh}
+.bk-kagit{display:flex;flex-direction:column;align-items:center;gap:6px}.bk-kagit canvas{background:#fff;box-shadow:0 6px 24px rgba(0,0,0,.35);max-width:none}
+.bk-no{font:600 12px system-ui,sans-serif;color:#f3f4f6}
+.pk-bas{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px}
+.pk-arac{font-weight:700;font-size:14px;margin-bottom:4px}.pk-bas .hint{margin:0 0 8px}
+.hb-sat{display:grid;grid-template-columns:1fr 1fr;gap:6px}.hb-sat .btn{justify-content:center}
+.pk{border:1px solid var(--line);border-radius:12px;margin-bottom:8px;background:var(--panel);overflow:hidden}
+.pk-b{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:8px;width:100%;padding:9px 12px;cursor:pointer;background:var(--panel2);border-bottom:1px solid var(--line)}
+.pk.kapali .pk-b{border-bottom-color:transparent}.pk-b:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}
+.pk-ik{width:22px;height:22px;border-radius:6px;background:var(--acc2);color:var(--acc);display:grid;place-items:center;font:700 12px system-ui,sans-serif;flex:none}
+.pk-ad{font-weight:700;font-size:13px;flex:1;min-width:0}.pk-alt{font-size:11.5px;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:45%}
+.pk-ok{color:var(--ink2);transition:transform .15s;font-size:12px}.pk.kapali .pk-ok{transform:rotate(-90deg)}
+.pk-i{padding:10px 12px 4px}.pk.kapali .pk-i{display:none}
+.pk-i .row{display:grid;grid-template-columns:92px 1fr auto auto;align-items:center;gap:6px 8px;margin-bottom:9px}
+.pk-i .row>label:first-child{min-width:0;font-size:12.5px;color:var(--ink2);display:flex;align-items:center;gap:5px}
+.pk-i .row>.tam{grid-column:1/-1;width:100%}.pk-i .row>.dol{grid-column:2/-1;width:100%;min-width:0}
+.pk-i .row>select,.pk-i .row>input[type=range]{min-width:0;width:100%}
+.pk-i .row>input[type=color]{width:44px;height:30px;padding:0 2px}
+.pk-i .row:has(#pYog){grid-template-columns:92px 1fr 40px;margin-bottom:0}.yog-cetvel{display:flex;justify-content:space-between;margin:0 48px 9px 100px;font-size:10.5px;color:var(--ink2)}
+.pk-i .row:has(#pZemin){grid-template-columns:92px 44px 1fr}
+.pk-i .row:has(.doku-sec:only-child),.pk-i .row:has(> .doku-sec:first-child){grid-template-columns:1fr}
+.pk-i .row:has(#pDel){grid-template-columns:1fr 1fr}.pk-i .row:has(#pDel) .btn{justify-content:center}
+.pk-i .hint{margin:-2px 0 9px}.pk-i .ok-sat{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px}.pk-i .ok-sat .btn{width:auto;height:36px;justify-content:center}
+.hb-sat{gap:6px}.hb-sat .btn{flex:1;justify-content:center}.doku-sec{display:flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap}#pToz{flex:1;min-width:70px}
+.yog-uc{font-size:11px;color:var(--ink2)}.yog-d{min-width:38px;text-align:right;font-size:12px}
+#pYog{flex:1;min-width:80px}#pDamla.on{background:var(--acc);color:#fff}
+#ov[data-damla]{cursor:crosshair}
 .obj .h{position:absolute;right:-7px;bottom:-7px;width:14px;height:14px;border-radius:50%;background:var(--acc);border:2px solid #fff;cursor:nwse-resize}
 .note-ic{width:22px;height:22px;border-radius:5px;background:#f6c945;color:#5a4400;display:grid;place-items:center;font-weight:800;font-size:13px;box-shadow:0 1px 3px rgba(0,0,0,.35);cursor:pointer}
 .empty{margin:auto;text-align:center;max-width:560px;padding:30px}
@@ -339,7 +379,7 @@ const Fonts = {
 };
 
 /* ---------------- durum ve geçmiş ---------------- */
-const St = {
+const St = { cizgisiz: (() => { try { return !!localStorage.getItem('pe-cizgisiz'); } catch (e) { return false; } })(),
   docs: new Map(),      /* id -> {id,name,bytes,pdf(pdf.js),pl(pdf-lib Promise),password,size} */
   pages: [],            /* {uid, src:{doc,index}|{blank:true}|{image:true}, w,h (pt, döndürmesiz), rot0, rot, resize:null|{w,h}, edits:[] } */
   cur: 0, sel: new Set(), meta: { title: '', author: '', subject: '', keywords: '' },
@@ -499,8 +539,10 @@ const Paint = {
       case 'line': case 'arrow': { const a = P(e.x1, e.y1), b = P(e.x2, e.y2); c.strokeStyle = cssRgb(e.color); c.lineWidth = e.lw * sc; c.globalAlpha = e.opacity ?? 1; c.lineCap = 'round'; c.beginPath(); c.moveTo(...a); c.lineTo(...b); c.stroke();
         if (e.t === 'arrow') { const ang = Math.atan2(b[1] - a[1], b[0] - a[0]), L = Math.max(8, e.lw * sc * 4); c.beginPath(); c.moveTo(...b); c.lineTo(b[0] - L * Math.cos(ang - .45), b[1] - L * Math.sin(ang - .45)); c.moveTo(...b); c.lineTo(b[0] - L * Math.cos(ang + .45), b[1] - L * Math.sin(ang + .45)); c.stroke(); } break; }
       case 'ink': { c.strokeStyle = cssRgb(e.color); c.lineWidth = e.lw * sc; c.globalAlpha = e.opacity ?? 1; c.lineCap = 'round'; c.lineJoin = 'round'; c.beginPath(); e.pts.forEach((q, i) => { const a = P(q[0], q[1]); i ? c.lineTo(...a) : c.moveTo(...a); }); c.stroke(); break; }
-      case 'text': case 'replace': { if (!e.text) break; const [x, y] = P(e.x, e.y), fs = e.size * sc; c.fillStyle = cssRgb(e.color); c.font = `${e.i ? 'italic ' : ''}${e.b ? '700 ' : '400 '}${fs}px ${Fonts.stack(e.font)}`;
-        c.translate(x, y); c.rotate(v.rotation * Math.PI / 180); String(e.text).split('\n').forEach((s, i) => c.fillText(s, 0, i * fs * 1.2)); break; }
+      case 'text': case 'replace': { if (!e.text) break; const [x, y] = P(e.x, e.y), fs = e.size * sc; c.font = `${e.i ? 'italic ' : ''}${e.b ? '700 ' : '400 '}${fs}px ${Fonts.stack(e.font)}`;
+        c.translate(x, y);
+        if (e.t === 'text' && e.bg) { const sat = String(e.text).split('\n'), gw = Math.max(...sat.map(q => c.measureText(q).width)); c.save(); c.rotate(v.rotation * Math.PI / 180); c.fillStyle = cssRgb(e.bg); c.fillRect(-fs * .1, -fs * .88, gw + fs * .2, sat.length * fs * 1.2); c.restore(); }
+        c.fillStyle = cssRgb(e.color, e.opacity ?? 1); c.rotate(v.rotation * Math.PI / 180); String(e.text).split('\n').forEach((s, i) => c.fillText(s, 0, i * fs * 1.2)); break; }
       case 'image': { if (e.bmp) c.drawImage(e.bmp, ...kutu(e)); break; }
       case 'note': { const [x, y] = P(e.x, e.y + 18); c.fillStyle = '#f6c945'; c.fillRect(x, y, 18 * sc, 18 * sc); c.fillStyle = '#5a4400'; c.font = `700 ${12 * sc}px sans-serif`; c.fillText('✎', x + 4 * sc, y + 14 * sc); break; }
     }
@@ -606,9 +648,9 @@ const View = {
         if (!fn) fn = (tc.styles[it.fontName] || {}).fontFamily || ''; og.push({ s: it.str, x: t[4], y: t[5], w: it.width || 0, size, fn }); }
       og.sort((a, b) => b.y - a.y || a.x - b.x);
       for (const o of og) { const L = this.lines[this.lines.length - 1];
-        if (L && Math.abs(L.y - o.y) <= L.size * .35 && o.x - (L.x + L.w) < L.size * 1.6 && o.x >= L.x - 1) { const g = o.x - (L.x + L.w); L.text += (g > L.size * .18 && !/\s$/.test(L.text) && !/^\s/.test(o.s) ? ' ' : '') + o.s; L.w = Math.max(L.w, o.x + o.w - L.x); L.parts.push(o); }
+        if (L && Math.abs(L.y - o.y) <= L.size * .35 && o.x - (L.x + L.w) < L.size * 1.6 && o.x >= L.x - 1 && !this.dikeyCizgi(L.x + L.w, o.x, o.y, o.size)) { const g = o.x - (L.x + L.w); L.text += (g > L.size * .18 && !/\s$/.test(L.text) && !/^\s/.test(o.s) ? ' ' : '') + o.s; L.w = Math.max(L.w, o.x + o.w - L.x); L.parts.push(o); }
         else this.lines.push({ x: o.x, y: o.y, w: o.w, size: o.size, text: o.s, parts: [o] }); }
-      this.lines = this.lines.filter(l => l.text.trim());
+      this.lines = this.hucreBol(this.lines.filter(l => l.text.trim()));
       for (const l of this.lines) { const say = new Map(); l.parts.forEach(q => say.set(q.fn, (say.get(q.fn) || 0) + q.s.length)); let en = '', ep = -1; say.forEach((v, k) => { if (v > ep) { ep = v; en = k; } });
         l.fn = en; l.font = Fonts.fromName(en); l.b = /bold|black|heavy|semibold|demi|,b\b|-b\b/i.test(en); l.i = /italic|oblique|,i\b|-i\b/i.test(en); l.size = Math.round(l.size * 2) / 2; l.text = l.text.replace(/\s+$/, '');
         const k = `${l.font}|${l.b}|${l.i}|${l.size}`, s = St.styles.get(k) || { font: l.font, b: l.b, i: l.i, size: l.size, n: 0, ornek: l.text.slice(0, 26), fn: en }; s.n += l.text.length; St.styles.set(k, s); }
@@ -621,19 +663,96 @@ const View = {
       const d = c.getImageData(x, y, w, h).data; let min = 765; for (let i = 0; i < d.length; i += 16) min = Math.min(min, d[i] + d[i + 1] + d[i + 2]);
       const k = [0, 0, 0], z = [0, 0, 0]; let kn = 0, zn = 0;
       for (let i = 0; i < d.length; i += 8) { const s = d[i] + d[i + 1] + d[i + 2]; if (s <= min + 90) { k[0] += d[i]; k[1] += d[i + 1]; k[2] += d[i + 2]; kn++; } else if (s > min + 250) { z[0] += d[i]; z[1] += d[i + 1]; z[2] += d[i + 2]; zn++; } }
-      const yazi = kn ? k.map(v => v / kn / 255) : [0, 0, 0], zemin = zn ? z.map(v => v / zn / 255) : [1, 1, 1];
-      return [yazi.map(v => v < .12 ? 0 : v), zemin.map(v => v > .94 ? 1 : v)];
+      /* 1.3: zemin = açık piksellerin ortancası (ince hücrede çizgi/kenar yumuşatması zemini griye çekmesin) */
+      const acik = []; for (let i = 0; i < d.length; i += 8) { const s = d[i] + d[i + 1] + d[i + 2]; if (s > min + 250) acik.push(i); } acik.sort((p, q) => (d[q] + d[q + 1] + d[q + 2]) - (d[p] + d[p + 1] + d[p + 2]));
+      const om = acik.length ? acik[Math.floor(acik.length * .3)] : -1;
+      const yazi = kn ? k.map(v => v / kn / 255) : [0, 0, 0], zemin = om >= 0 ? [d[om] / 255, d[om + 1] / 255, d[om + 2] / 255] : (zn ? z.map(v => v / zn / 255) : [1, 1, 1]);
+      return [yazi.map(v => v < .12 ? 0 : v), zemin.every(v => v > .94) ? [1, 1, 1] : zemin];   /* 1.3: yalnız üç kanal da açıksa beyaza yuvarla (krem kağıt pembeleşmesin) */
     } catch (e) { return [[0, 0, 0], [1, 1, 1]]; }
+  },
+  /* 1.3: satırı dikey tablo çizgilerinden böl (pdf.js aynı satırdaki hücreleri tek parça verebiliyor) */
+  dikeyCizgiler(x0, x1, y, size) {
+    const out = []; try { const v = this.v, cv = $('#pageCv'), dpr = cv.width / v.width, a = v.convertToViewportRectangle([x0, y - size * .15, x1, y + size * .75]);
+      const X0 = Math.max(0, Math.floor(Math.min(a[0], a[2]) * dpr)), X1 = Math.min(cv.width, Math.ceil(Math.max(a[0], a[2]) * dpr)), Y0 = Math.max(0, Math.floor(Math.min(a[1], a[3]) * dpr)), Y1 = Math.min(cv.height, Math.ceil(Math.max(a[1], a[3]) * dpr));
+      const W = X1 - X0, H = Y1 - Y0; if (W < 2 || H < 3) return out; const d = cv.getContext('2d').getImageData(X0, Y0, W, H).data; let bas = -1;
+      for (let x = 0; x <= W; x++) { let tam = false; if (x < W) { let n = 0; for (let yy = 0; yy < H; yy++) { const i = (yy * W + x) * 4; if (d[i] + d[i + 1] + d[i + 2] < 400) n++; } tam = n / H > .85; }
+        if (tam && bas < 0) bas = x; if (!tam && bas >= 0) { if (x - bas <= 4 * dpr) out.push(v.convertToPdfPoint((X0 + (bas + x) / 2) / dpr, 0)[0]); bas = -1; } }
+    } catch (e) { } return out;
+  },
+  hucreBol(lines) {
+    const cv = document.createElement('canvas').getContext('2d'), sonuc = [];
+    for (const l of lines) {
+      const kes = this.dikeyCizgiler(l.x + l.size * .2, l.x + l.w - l.size * .2, l.y, l.size); if (!kes.length) { sonuc.push(l); continue; }
+      cv.font = `${l.size}px serif`; const top = cv.measureText(l.text).width || 1, k = l.w / top, gen = i => cv.measureText(l.text.slice(0, i)).width * k;
+      let kalan = l.text, x0 = l.x, ofs = 0;
+      for (const X of kes) { let en = -1, ed = 1e9; for (let i = 1; i < kalan.length; i++) { if (kalan[i] !== ' ' && kalan[i - 1] !== ' ') continue; const dd = Math.abs(l.x + gen(ofs + i) - X); if (dd < ed) { ed = dd; en = i; } }
+        if (en < 0 || ed > l.size * 1.5) continue; const sol = kalan.slice(0, en).replace(/\s+$/, ''), basl = kalan.slice(en).match(/^\s*/)[0].length;
+        if (sol.trim()) sonuc.push({ ...l, x: x0, w: Math.max(1, l.x + gen(ofs + sol.length) - x0), text: sol });
+        ofs += en + basl; x0 = l.x + gen(ofs); kalan = kalan.slice(en + basl); }
+      if (kalan.trim()) sonuc.push({ ...l, x: x0, w: Math.max(1, l.x + l.w - x0), text: kalan });
+    }
+    return sonuc;
+  },
+  /* 1.3: iki yazı parçası arasında dikey tablo çizgisi var mı (varsa ayrı satır sayılır — hücreler birleşmez) */
+  dikeyCizgi(x0, x1, y, size) {
+    try { if (x1 - x0 < .3) return false; const v = this.v, cv = $('#pageCv'), dpr = cv.width / v.width, a = v.convertToViewportRectangle([x0, y - size * .15, x1, y + size * .75]);
+      const X0 = Math.max(0, Math.floor(Math.min(a[0], a[2]) * dpr)), X1 = Math.min(cv.width, Math.ceil(Math.max(a[0], a[2]) * dpr)), Y0 = Math.max(0, Math.floor(Math.min(a[1], a[3]) * dpr)), Y1 = Math.min(cv.height, Math.ceil(Math.max(a[1], a[3]) * dpr));
+      const W = X1 - X0, H = Y1 - Y0; if (W < 1 || H < 3) return false; const d = cv.getContext('2d').getImageData(X0, Y0, W, H).data;
+      for (let x = 0; x < W; x++) { let n = 0; for (let yy = 0; yy < H; yy++) { const i = (yy * W + x) * 4; if (d[i] + d[i + 1] + d[i + 2] < 400) n++; } if (n / H > .85) return true; }
+      return false; } catch (e) { return false; }
+  },
+  /* 1.3: eski yazıyı örten kutu tablo/çerçeve çizgilerinin üstüne binmesin — kenarlarda çizgi varsa kutu içeri çekilir */
+  cizgidenUzak(k) {
+    try { const v = this.v, cv = $('#pageCv'), dpr = cv.width / v.width, a = v.convertToViewportRectangle([k.x, k.y, k.x + k.w, k.y + k.h]);
+      const pay = 3 * dpr, x0 = Math.max(0, Math.floor(Math.min(a[0], a[2]) * dpr - pay)), y0 = Math.max(0, Math.floor(Math.min(a[1], a[3]) * dpr - pay));
+      const x1 = Math.min(cv.width, Math.ceil(Math.max(a[0], a[2]) * dpr + pay)), y1 = Math.min(cv.height, Math.ceil(Math.max(a[1], a[3]) * dpr + pay)), W = x1 - x0, H = y1 - y0; if (W < 4 || H < 4) return;
+      const d = cv.getContext('2d').getImageData(x0, y0, W, H).data, koyu = i => d[i] + d[i + 1] + d[i + 2] < 480;
+      const sat = new Array(H).fill(0), sut = new Array(W).fill(0);
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (koyu((y * W + x) * 4)) sat[y]++;
+      let ust = Math.min(a[1], a[3]) * dpr, alt = Math.max(a[1], a[3]) * dpr, sol = Math.min(a[0], a[2]) * dpr, sag = Math.max(a[0], a[2]) * dpr; const bosluk = .3 * dpr;
+      for (let y = 0; y < H; y++) { const Y = y0 + y; if (sat[y] / W < .8) continue; if (Y <= ust + (alt - ust) * .35) ust = Math.max(ust, Y + 1 + bosluk); else if (Y >= alt - (alt - ust) * .35) alt = Math.min(alt, Y - bosluk); }
+      /* sütunlar yalnız (çizgilerden arındırılmış) kutu yüksekliğinde sayılır */
+      const ry0 = Math.max(0, Math.ceil(ust - y0)), ry1 = Math.min(H, Math.floor(alt - y0)), RH = Math.max(1, ry1 - ry0);
+      for (let y = ry0; y < ry1; y++) for (let x = 0; x < W; x++) if (koyu((y * W + x) * 4)) sut[x]++;
+      for (let x = 0; x < W; x++) { const X = x0 + x; if (sut[x] / RH < .85) continue; if (X <= sol + (sag - sol) * .2) sol = Math.max(sol, X + 1 + bosluk); else if (X >= sag - (sag - sol) * .2) sag = Math.min(sag, X - bosluk); }
+      if (alt - ust < 2 || sag - sol < 2) return;
+      const p1 = v.convertToPdfPoint(sol / dpr, ust / dpr), p2 = v.convertToPdfPoint(sag / dpr, alt / dpr);
+      k.x = Math.min(p1[0], p2[0]); k.w = Math.abs(p2[0] - p1[0]); k.y = Math.min(p1[1], p2[1]); k.h = Math.abs(p2[1] - p1[1]);
+    } catch (x) { }
   },
   zemin(vx, vy) { try { const cv = $('#pageCv'), dpr = cv.width / this.v.width, d = cv.getContext('2d').getImageData(Math.floor(vx * dpr), Math.floor(vy * dpr), 1, 1).data; const r = [d[0], d[1], d[2]].map(x => x / 255); return r.every(x => x > .94) ? [1, 1, 1] : r; } catch (e) { return [1, 1, 1]; } },
   zoom(f) { St.fitMode = 'free'; St.zoom = clamp(St.zoom * f, .2, 6); this.ciz(); },
   sigdir(m) { St.fitMode = m; this.ciz(); }
 };
 
+/* ---------------- 1.3: taranmış (tozlu) yazı ----------------
+   Siyah yazının üzerinde ince beyaz tozlar: ekranda desenli yazı, PDF'te yazı yüksek çözünürlüklü görsel olarak gömülür. */
+const Doku = {
+  rnd(seed) { let x = 0; for (const c of String(seed)) x = (x * 31 + c.charCodeAt(0)) >>> 0; x = x || 1; return () => { x ^= x << 13; x >>>= 0; x ^= x >> 17; x ^= x << 5; x >>>= 0; return x / 4294967296; }; },
+  desen(e) { const n = 48, c = document.createElement('canvas'); c.width = c.height = n; const g = c.getContext('2d'); g.fillStyle = cssRgb(e.color, e.opacity ?? 1); g.fillRect(0, 0, n, n);
+    const im = g.getImageData(0, 0, n, n), d = im.data, R = this.rnd(e.id), oran = e.doku || .12;
+    for (let i = 0; i < d.length; i += 4) { const q = R(); if (q < oran) { const t = .55 + R() * .45; d[i] = d[i] + (255 - d[i]) * t; d[i + 1] = d[i + 1] + (255 - d[i + 1]) * t; d[i + 2] = d[i + 2] + (255 - d[i + 2]) * t; d[i + 3] = Math.round(d[i + 3] * (1 - t * .9)); } }
+    g.putImageData(im, 0, 0); return c.toDataURL(); },
+  ekran(d, e, v) { const u = this.desen(e), boy = 14 * v.scale; Object.assign(d.style, { backgroundImage: `url(${u})`, backgroundSize: `${boy}px ${boy}px`, webkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent', caretColor: cssRgb(e.color), filter: 'blur(.25px)' }); },
+  /* PDF için: yazıyı tozlu PNG'ye çevir; kutu PDF birimlerinde */
+  async png(e) { await Fonts.loadCss(e.font, e.b, e.i); const K = 10, pad = e.size * .25, sat = String(e.text).split('\n');
+    const c = document.createElement('canvas'), g = c.getContext('2d'), fnt = s => `${e.i ? 'italic ' : ''}${e.b ? '700 ' : '400 '}${s}px ${Fonts.stack(e.font)}`;
+    g.font = fnt(e.size * K); const gw = Math.max(1, ...sat.map(q => g.measureText(q).width)) / K;
+    const W = gw + pad * 2, H = sat.length * e.size * 1.2 + pad * 2; c.width = Math.ceil(W * K); c.height = Math.ceil(H * K);
+    g.font = fnt(e.size * K); g.fillStyle = cssRgb(e.color, e.opacity ?? 1); g.filter = 'blur(' + (K * .045).toFixed(2) + 'px)';
+    sat.forEach((q, i) => g.fillText(q, pad * K, (pad + e.size * .88 + i * e.size * 1.2) * K)); g.filter = 'none';
+    const im = g.getImageData(0, 0, c.width, c.height), d = im.data, R = this.rnd(e.id), oran = e.doku || .12, w = c.width;
+    for (let y = 0; y < c.height; y += 2) for (let x = 0; x < w; x += 2) { if (R() >= oran) continue; const k = R() < .3 ? 3 : 2, t = .6 + R() * .4;
+      for (let yy = y; yy < Math.min(y + k, c.height); yy++) for (let xx = x; xx < Math.min(x + k, w); xx++) { const i = (yy * w + xx) * 4; d[i + 3] = Math.round(d[i + 3] * (1 - t)); } }
+    g.putImageData(im, 0, 0); const blob = await new Promise(ok => c.toBlob(ok, 'image/png'));
+    return { bytes: new Uint8Array(await blob.arrayBuffer()), x: e.x - pad, ust: e.y + e.size * .88 + pad, w: W, h: H };
+  }
+};
+
 /* ---------------- kaplama katmanı: nesneler ve araçlar ---------------- */
 const Overlay = {
   ciz() {
-    const ov = $('#ov'), p = St.pages[St.cur], v = View.v; if (!p || !v) return; ov.dataset.tool = St.tool; ov.innerHTML = '';
+    const ov = $('#ov'), p = St.pages[St.cur], v = View.v; if (!p || !v) return; ov.dataset.tool = St.tool; ov.innerHTML = ''; ov.classList.toggle('temiz', !!St.cizgisiz); if (St.damla) ov.dataset.damla = '1'; else delete ov.dataset.damla;
     /* 1.1: seçili olmayan, hiç değiştirilmemiş satır düzenlemeleri kalkar */
     if (p.edits.some(e => e.id !== St.selObj && this.degismedi(e))) p.edits = p.edits.filter(e => e.id === St.selObj || !this.degismedi(e));
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); ov.appendChild(svg);
@@ -649,8 +768,10 @@ const Overlay = {
       if (e.t === 'text' || e.t === 'replace') {
         if (e.cover) { const k = kutu(e.cover); const d = document.createElement('div'); d.className = 'obj'; Object.assign(d.style, { left: k.l + 'px', top: k.t + 'px', width: k.w + 'px', height: k.h + 'px', background: cssRgb(e.cover.color), pointerEvents: 'none' }); ov.appendChild(d); }
         const [x, y] = v.convertToViewportPoint(e.x, e.y), fs = e.size * v.scale; const d = document.createElement('div'); d.className = 'obj txt' + (secili ? ' sel' : ''); d.dataset.id = e.id; d.contentEditable = St.tool === 'select' ? 'false' : 'true'; d.spellcheck = false;
-        Object.assign(d.style, { left: x + 'px', top: (y - fs * .88) + 'px', fontFamily: Fonts.stack(e.font), fontSize: fs + 'px', lineHeight: (fs * 1.2) + 'px', fontWeight: e.b ? 700 : 400, fontStyle: e.i ? 'italic' : 'normal', color: cssRgb(e.color), transformOrigin: `0 ${fs * .88}px`, transform: v.rotation ? `rotate(${v.rotation}deg)` : '' });
+        Object.assign(d.style, { left: x + 'px', top: (y - fs * .88) + 'px', fontFamily: Fonts.stack(e.font), fontSize: fs + 'px', lineHeight: (fs * 1.2) + 'px', fontWeight: e.b ? 700 : 400, fontStyle: e.i ? 'italic' : 'normal', color: cssRgb(e.color, e.opacity ?? 1), background: (e.t === 'text' && e.bg) ? cssRgb(e.bg) : '', transformOrigin: `0 ${fs * .88}px`, transform: v.rotation ? `rotate(${v.rotation}deg)` : '' });
         d.textContent = e.text; ov.appendChild(d); Fonts.loadCss(e.font, e.b, e.i);
+        if (e.doku) Doku.ekran(d, e, v);
+        if (secili && !v.rotation) this.tutamak(d, e, v, p);
         d.addEventListener('focus', () => { St.selObj = e.id; Props.ciz(); d._once = d._once || (Hist.kaydet(), true); });
         d.addEventListener('input', () => { e.text = d.innerText.replace(/\n$/, ''); });
         d.addEventListener('blur', () => { d._once = false; e.text = d.innerText.replace(/\n$/, ''); if (this.degismedi(e)) setTimeout(() => { const a = document.activeElement; if (St.selObj === e.id && a && (a.closest('#props,.props,#panel,aside') || a === d)) return; if (this.degismedi(e)) { p.edits = p.edits.filter(x => x !== e); if (St.selObj === e.id) St.selObj = null; this.ciz(); Props.ciz(); } }, 150); if (e.t === 'text' && !e.text.trim()) { p.edits = p.edits.filter(x => x !== e); this.ciz(); } Thumbs.yenile(p); });
@@ -666,6 +787,45 @@ const Overlay = {
       }
     });
   },
+  /* 1.4: yön tuşlarıyla taşıma — 1 adım = 0,5 pt (Shift ile 5 pt); ard arda basışlar tek geri-al adımı olur */
+  kaydir(dx, dy, kat, odakta) {
+    const p = St.pages[St.cur], v = View.v, e = p && p.edits.find(x => x.id === St.selObj); if (!e || !v) return;
+    const adim = .5 * kat * v.scale, p0 = v.convertToPdfPoint(0, 0), p1 = v.convertToPdfPoint(dx * adim, dy * adim), ex = p1[0] - p0[0], ey = p1[1] - p0[1];
+    const simdi = Date.now(); if (!this._kt || simdi - this._kt > 900) Hist.kaydet(); this._kt = simdi;
+    if (e.pts) e.pts = e.pts.map(z => [z[0] + ex, z[1] + ey]); if (e.x1 != null) { e.x1 += ex; e.x2 += ex; e.y1 += ey; e.y2 += ey; } if (e.x != null) { e.x += ex; e.y += ey; }
+    this.ciz(); if (odakta && (e.t === 'text' || e.t === 'replace')) this.odak(e);
+    clearTimeout(this._kz); this._kz = setTimeout(() => { Thumbs.yenile(p); Props.ciz(); }, 400);
+  },
+  /* 1.4: düzenleme çerçevelerini (kesik "karınca" çizgileri) gizle/göster — yalnız ekranda; PDF'e zaten çıkmaz */
+  cizgiDegis(ac) { St.cizgisiz = ac == null ? !St.cizgisiz : !!ac; try { localStorage.setItem('pe-cizgisiz', St.cizgisiz ? '1' : ''); } catch (x) { }
+    const ov = $('#ov'); if (ov) ov.classList.toggle('temiz', !!St.cizgisiz); const b = $('#bCizgi'); if (b) b.setAttribute('aria-pressed', String(!!St.cizgisiz));
+    const c = $('#pCizgi'); if (c) c.checked = !!St.cizgisiz; toast(St.cizgisiz ? 'Kesik çizgiler gizlendi' : 'Kesik çizgiler gösteriliyor'); },
+  /* 1.2: seçili metnin çevresinde taşıma ve büyütme-küçültme tutamakları (fare ve dokunmatik) */
+  tutamak(d, e, v, p) {
+    const ov = $('#ov'), k = document.createElement('div'); k.className = 'tk'; ov.appendChild(k);
+    const kutuGuncelle = () => { Object.assign(k.style, { left: (d.offsetLeft - 6) + 'px', top: (d.offsetTop - 6) + 'px', width: (d.offsetWidth + 12) + 'px', height: (d.offsetHeight + 12) + 'px' }); };
+    k.innerHTML = '<i class="tk-n" data-y="-1,-1"></i><i class="tk-n" data-y="1,-1"></i><i class="tk-n" data-y="-1,1"></i><i class="tk-n" data-y="1,1"></i><b class="tk-tasi" title="Sürükle: taşı">✥</b>';
+    kutuGuncelle();
+    const yerles = () => { const [x, y] = v.convertToViewportPoint(e.x, e.y), fs = e.size * v.scale; Object.assign(d.style, { left: x + 'px', top: (y - fs * .88) + 'px', fontSize: fs + 'px', lineHeight: (fs * 1.2) + 'px', transformOrigin: `0 ${fs * .88}px` }); kutuGuncelle(); };
+    const engelle = ev => { ev.preventDefault(); ev.stopPropagation(); };
+    k.addEventListener('mousedown', engelle);
+    k.addEventListener('pointerdown', ev => {
+      const h = ev.target.closest('.tk-n,.tk-tasi'); if (!h) return; engelle(ev);
+      const r0 = { l: d.offsetLeft, t: d.offsetTop, w: d.offsetWidth || 1, h: d.offsetHeight || 1 }, s0 = e.size, x0 = ev.clientX, y0 = ev.clientY;
+      const tasi = h.classList.contains('tk-tasi'), yon = tasi ? null : h.dataset.y.split(',').map(Number); let oynadi = false;
+      Hist.kaydet(); try { h.setPointerCapture(ev.pointerId); } catch (x) { }
+      const hareket = m => { const dx = m.clientX - x0, dy = m.clientY - y0; if (!oynadi && Math.abs(dx) + Math.abs(dy) < 2) return; oynadi = true;
+        if (tasi) { const [px, py] = v.convertToPdfPoint(r0.l + dx, r0.t + dy + s0 * v.scale * .88); e.x = px; e.y = py; }
+        else { let f = 1 + (yon[0] * dx * r0.w + yon[1] * dy * r0.h) / (r0.w * r0.w + r0.h * r0.h);   /* köşegen yönündeki çekme kadar orantılı */
+          const yeni = clamp(Math.round(s0 * f * 2) / 2, 4, 144); f = yeni / s0; e.size = yeni;
+          const w = r0.w * f, hh = r0.h * f, l = yon[0] < 0 ? r0.l + r0.w - w : r0.l, t = yon[1] < 0 ? r0.t + r0.h - hh : r0.t;
+          const [px, py] = v.convertToPdfPoint(l, t + yeni * v.scale * .88); e.x = px; e.y = py; St.style.size = yeni; const ps = $('#pSize'); if (ps) ps.value = yeni; }
+        yerles(); };
+      const bitir = () => { h.removeEventListener('pointermove', hareket); h.removeEventListener('pointerup', bitir); h.removeEventListener('pointercancel', bitir);
+        if (!oynadi) { Hist.past.pop(); return; } this.ciz(); Props.ciz(); Thumbs.yenile(p); };
+      h.addEventListener('pointermove', hareket); h.addEventListener('pointerup', bitir); h.addEventListener('pointercancel', bitir);
+    });
+  },
   sinir(e) {
     if (e.pts) { const xs = e.pts.map(q => q[0]), ys = e.pts.map(q => q[1]); const x = Math.min(...xs), y = Math.min(...ys); return { x, y, w: Math.max(...xs) - x, h: Math.max(...ys) - y }; }
     if (e.t === 'line' || e.t === 'arrow') return { x: Math.min(e.x1, e.x2), y: Math.min(e.y1, e.y2), w: Math.abs(e.x2 - e.x1), h: Math.abs(e.y2 - e.y1) };
@@ -674,6 +834,14 @@ const Overlay = {
   /* işaretçi olayları */
   bagla() {
     const ov = $('#ov'); let dr = null;
+    /* 1.2: damlalık — sayfada dokunulan noktanın rengi seçili metnin zemini olur */
+    const damlaAl = ev => { if (!St.damla) return; ev.preventDefault(); ev.stopPropagation(); if (ev.type !== 'pointerdown') return;
+      const p = St.pages[St.cur], e = p && p.edits.find(x => x.id === St.damlaHedef); St.damla = false;
+      if (e && View.v) { const r = ov.getBoundingClientRect(), cv = $('#pageCv'), dpr = cv.width / View.v.width, px = Math.floor((ev.clientX - r.left) * dpr), py = Math.floor((ev.clientY - r.top) * dpr);
+        try { const d = cv.getContext('2d').getImageData(Math.max(0, px - 1), Math.max(0, py - 1), 3, 3).data; const t = [0, 0, 0]; let n = 0; for (let i = 0; i < d.length; i += 4) { t[0] += d[i]; t[1] += d[i + 1]; t[2] += d[i + 2]; n++; }
+          const renk = t.map(x => x / n / 255); Hist.kaydet(); if (e.cover) e.cover.color = renk; else e.bg = renk; St.selObj = e.id; toast('Zemin rengi alındı', 'ok'); } catch (x) { toast('Renk okunamadı', 'err'); } }
+      this.ciz(); Props.ciz(); if (p) Thumbs.yenile(p); };
+    ov.addEventListener('pointerdown', damlaAl, true); ov.addEventListener('mousedown', damlaAl, true); ov.addEventListener('click', ev => { if (ov.dataset.damla) { ev.preventDefault(); ev.stopPropagation(); } }, true);
     const pdfN = ev => { const r = ov.getBoundingClientRect(); return View.v.convertToPdfPoint(ev.clientX - r.left, ev.clientY - r.top); };
     const yer = ev => { const r = ov.getBoundingClientRect(); return [ev.clientX - r.left, ev.clientY - r.top]; };
     ov.addEventListener('pointerdown', async ev => {
@@ -728,12 +896,13 @@ const Overlay = {
     const p = St.pages[St.cur]; if (!p || !View.v) return; const i = +lb.dataset.line, l = View.lines[i]; if (!l) return;
     if (p.edits.some(e => e.line === i)) return;
     const [yz, zm] = View.renkler(l);
+    const kapak = { x: l.x - .5, y: l.y - l.size * .28, w: l.w + 1, h: l.size * 1.22, color: zm }; View.cizgidenUzak(kapak);   /* 1.3: tuval yeniden çizilmeden önce ölç */
     Hist.kaydet(); await Fonts.loadCss(l.font, l.b, l.i);
-    const e = { id: uid(), t: 'replace', line: i, x: l.x, y: l.y, text: l.text, orig: l.text, font: l.font, b: l.b, i: l.i, size: l.size, color: yz, cover: { x: l.x - .5, y: l.y - l.size * .28, w: l.w + 1, h: l.size * 1.22, color: zm } };
-    e.os = { font: e.font, b: e.b, i: e.i, size: e.size, color: yz.join(','), x: e.x, y: e.y };
+    const e = { id: uid(), t: 'replace', line: i, x: l.x, y: l.y, text: l.text, orig: l.text, font: l.font, b: l.b, i: l.i, size: l.size, color: yz, cover: kapak };
+    e.os = { font: e.font, b: e.b, i: e.i, size: e.size, color: yz.join(','), x: e.x, y: e.y, cz: zm.join(',') };
     p.edits.push(e); St.selObj = e.id; this.ciz(); Props.ciz(); this.odak(e);
   },
-  degismedi(e) { return e && e.t === 'replace' && e.os && e.text === e.orig && e.font === e.os.font && !!e.b === !!e.os.b && !!e.i === !!e.os.i && e.size === e.os.size && (e.color || []).join(',') === e.os.color && e.x === e.os.x && e.y === e.os.y; },
+  degismedi(e) { return e && e.t === 'replace' && e.os && e.text === e.orig && e.font === e.os.font && !!e.b === !!e.os.b && !!e.i === !!e.os.i && e.size === e.os.size && (e.color || []).join(',') === e.os.color && e.x === e.os.x && e.y === e.os.y && (e.opacity ?? 1) === 1 && !e.doku && (!e.cover || e.os.cz == null || e.cover.color.join(',') === e.os.cz); },
   yeniNesne(dr) {
     const s = St.style, [x1, y1] = dr.a, [x2, y2] = dr.b, r = { x: Math.min(x1, x2), y: Math.min(y1, y2), w: Math.abs(x2 - x1), h: Math.abs(y2 - y1) };
     const id = dr.id || (dr.id = uid());
@@ -767,22 +936,40 @@ const Props = {
     const kaynak = sec || s;
     const stiller = [...St.styles.values()].sort((a, b) => b.n - a.n).slice(0, 12);
     const ipucu = { select: 'Nesneye dokun: seç, sürükle: taşı, köşe: boyutlandır. Delete: sil.', edit: 'Değiştirmek istediğin satıra dokun. Yazı tipi, punto ve renk otomatik algılanır; satırı silmek için metni boşalt.', text: 'Yazmak istediğin yere dokun.', pen: 'Serbest çizim.', rect: 'Dikdörtgen çiz.', ellipse: 'Elips çiz.', line: 'Çizgi çiz.', arrow: 'Ok çiz.', highlight: 'Vurgulanacak metnin üzerinden sürükle.', underline: 'Altı çizilecek metnin üzerinden sürükle.', strike: 'Üstü çizilecek metnin üzerinden sürükle.', note: 'Not eklemek için sayfaya dokun. Notlar PDF okuyucularda yorum olarak açılır.', whiteout: 'Gizlenecek alanı çiz (zemin rengiyle kapatılır).' }[t] || '';
-    let h = `<h3>${{ select: 'Seç / taşı', edit: 'Metni düzenle', text: 'Metin ekle', pen: 'Kalem', rect: 'Dikdörtgen', ellipse: 'Elips', line: 'Çizgi', arrow: 'Ok', highlight: 'Vurgula', underline: 'Altını çiz', strike: 'Üstünü çiz', note: 'Not / yorum', whiteout: 'Beyaz kutu' }[t] || 'Araç'}</h3>${ipucu ? `<div class="hint">${ipucu}</div>` : ''}`;
-    if (yaziTool) h += `<h3>Yazı</h3>
-      ${stiller.length ? `<div class="row"><select id="pStil"><option value="">Belgedeki yazı stilleri…</option>${stiller.map((x, i) => `<option value="${i}">${i === 0 ? '★ ' : ''}${Fonts.AD[x.font]} ${x.size} pt${x.b ? ' kalın' : ''}${x.i ? ' italik' : ''} — ${esc(x.ornek)}</option>`).join('')}</select></div>` : ''}
-      <div class="row"><label>Yazı tipi</label><select id="pFont">${Object.entries(Fonts.AD).map(([k, v]) => `<option value="${k}" ${kaynak.font === k ? 'selected' : ''}>${v}</option>`).join('')}</select></div>
+    /* 1.5: sağ panel bölümlere ayrıldı — her bölüm başlığa dokununca açılır/kapanır; durum hatırlanır */
+    let kap = {}; try { kap = JSON.parse(localStorage.getItem('pe-pk') || '{}'); } catch (x) { }
+    const bol = (k, ad, ik, ic, alt = '') => ic ? `<section class="pk${kap[k] ? ' kapali' : ''}" data-k="${k}"><button class="pk-b" type="button" aria-expanded="${!kap[k]}"><span class="pk-ik">${ik}</span><span class="pk-ad">${ad}</span>${alt ? `<span class="pk-alt">${alt}</span>` : ''}<span class="pk-ok">▾</span></button><div class="pk-i">${ic}</div></section>` : '';
+    const aracAd = { select: 'Seç / taşı', edit: 'Metni düzenle', text: 'Metin ekle', pen: 'Kalem', rect: 'Dikdörtgen', ellipse: 'Elips', line: 'Çizgi', arrow: 'Ok', highlight: 'Vurgula', underline: 'Altını çiz', strike: 'Üstünü çiz', note: 'Not / yorum', whiteout: 'Beyaz kutu' }[t] || 'Araç';
+    const metinSec = sec && (sec.t === 'text' || sec.t === 'replace');
+    let h = `<div class="pk-bas"><div class="pk-arac">${aracAd}</div>${ipucu ? `<div class="hint">${ipucu}</div>` : ''}
+      <div class="hb-sat"><button class="btn" id="pGeri" ${Hist.past.length ? '' : 'disabled'} title="Geri al (Ctrl+Z)">↶ Geri al</button><button class="btn" id="pIleri" ${Hist.future.length ? '' : 'disabled'} title="İleri al (Ctrl+Y)">İleri al ↷</button></div></div>`;
+    if (yaziTool) h += bol('yazi', 'Yazı', 'A', `
+      ${stiller.length ? `<div class="row"><select id="pStil" class="tam"><option value="">Belgedeki yazı stilleri…</option>${stiller.map((x, i) => `<option value="${i}">${i === 0 ? '★ ' : ''}${Fonts.AD[x.font]} ${x.size} pt${x.b ? ' kalın' : ''}${x.i ? ' italik' : ''} — ${esc(x.ornek)}</option>`).join('')}</select></div>` : ''}
+      <div class="row"><label>Yazı tipi</label><select id="pFont" class="dol">${Object.entries(Fonts.AD).map(([k, v]) => `<option value="${k}" ${kaynak.font === k ? 'selected' : ''}>${v}</option>`).join('')}</select></div>
       <div class="row"><label>Punto</label><input type="number" id="pSize" min="4" max="144" step=".5" value="${kaynak.size}"><button class="btn ic" id="pB" aria-pressed="${!!kaynak.b}" title="Kalın"><b>K</b></button><button class="btn ic" id="pI" aria-pressed="${!!kaynak.i}" title="İtalik"><i>İ</i></button></div>
-      <div class="row"><label>Renk</label><input type="color" id="pColor" value="${rgb2hex(kaynak.color || [0, 0, 0])}"></div>`;
-    if (cizTool) h += `<h3>Çizgi</h3><div class="row"><label>Renk</label><input type="color" id="pStroke" value="${rgb2hex((sec ? sec.color : s.stroke) || [0, 0, 0])}"></div>
-      <div class="row"><label>Kalınlık</label><input type="range" id="pWidth" min=".5" max="12" step=".5" value="${sec ? sec.lw : s.width}"></div>
-      <div class="row"><label>Saydamlık</label><input type="range" id="pOpac" min=".1" max="1" step=".05" value="${(sec ? sec.opacity : s.opacity) ?? 1}"></div>
-      ${['rect', 'ellipse'].includes(sec ? sec.t : t) ? `<div class="row"><label>Dolgu</label><input type="checkbox" id="pFillOn" ${(sec ? sec.fill : s.fill) ? 'checked' : ''}><input type="color" id="pFill" value="${rgb2hex((sec ? sec.fill : s.fill) || [1, 1, 0.6])}"></div>` : ''}`;
-    if (t === 'highlight' || (sec && sec.t === 'highlight')) h += `<div class="row"><label>Vurgu rengi</label><input type="color" id="pHl" value="${rgb2hex(sec ? sec.color : s.hl)}"></div>`;
-    if (sec) h += `<h3>Seçili nesne</h3><div class="row"><button class="btn" id="pDel">${ic('trash', 16)}Sil</button>${sec.t === 'note' ? `<button class="btn" id="pNote">${ic('note', 16)}Notu düzenle</button>` : ''}</div>`;
+      <div class="row"><label>Yazı rengi</label><input type="color" id="pColor" value="${rgb2hex(kaynak.color || [0, 0, 0])}"></div>`, `${Fonts.AD[kaynak.font] || ''} · ${kaynak.size} pt`);
+    if (metinSec) h += bol('gorunum', 'Görünüm', '◐', `
+      <div class="row"><label>Yoğunluk</label><input type="range" id="pYog" min=".1" max="1" step=".05" value="${sec.opacity ?? 1}" title="Sola: soluk · Sağa: koyu"><b id="pYogD" class="yog-d">${Math.round((sec.opacity ?? 1) * 100)}%</b></div><div class="yog-cetvel"><span>soluk</span><span>koyu</span></div>
+      <div class="row"><label>Doku</label><label class="doku-sec"><input type="checkbox" id="pDoku" ${sec.doku ? 'checked' : ''}> Taranmış (tozlu)</label></div>
+      ${sec.doku ? `<div class="row"><label>Toz miktarı</label><input type="range" id="pToz" class="dol" min=".05" max=".45" step=".01" value="${sec.doku}"></div>` : ''}`, `${Math.round((sec.opacity ?? 1) * 100)}%${sec.doku ? ' · tozlu' : ''}`);
+    if (metinSec) h += bol('zemin', 'Zemin', '▧', `
+      <div class="row"><label>${sec.t === 'text' ? '<input type="checkbox" id="pZOn" title="Metnin arkasına zemin rengi koy" ' + (sec.bg ? 'checked' : '') + '> Zemin' : 'Örtü rengi'}</label><input type="color" id="pZemin" value="${rgb2hex((sec.cover && sec.cover.color) || sec.bg || [1, 1, 1])}"><button class="btn dol${St.damla ? ' on' : ''}" id="pDamla" aria-pressed="${!!St.damla}" title="Sayfada bir noktaya dokun: o noktanın rengi zemin olur">${St.damla ? 'Noktaya dokun…' : '💧 Sayfadan seç'}</button></div>
+      ${sec.t === 'replace' ? '<div class="hint">Eski yazıyı örten kutunun rengi. Tablo çizgilerine binmez.</div>' : ''}`);
+    if (cizTool) h += bol('cizgi', 'Çizgi', '✎', `<div class="row"><label>Renk</label><input type="color" id="pStroke" value="${rgb2hex((sec ? sec.color : s.stroke) || [0, 0, 0])}"></div>
+      <div class="row"><label>Kalınlık</label><input type="range" id="pWidth" class="dol" min=".5" max="12" step=".5" value="${sec ? sec.lw : s.width}"></div>
+      <div class="row"><label>Saydamlık</label><input type="range" id="pOpac" class="dol" min=".1" max="1" step=".05" value="${(sec ? sec.opacity : s.opacity) ?? 1}"></div>
+      ${['rect', 'ellipse'].includes(sec ? sec.t : t) ? `<div class="row"><label><input type="checkbox" id="pFillOn" ${(sec ? sec.fill : s.fill) ? 'checked' : ''}> Dolgu</label><input type="color" id="pFill" value="${rgb2hex((sec ? sec.fill : s.fill) || [1, 1, 0.6])}"></div>` : ''}`);
+    if (t === 'highlight' || (sec && sec.t === 'highlight')) h += bol('vurgu', 'Vurgu', '▬', `<div class="row"><label>Vurgu rengi</label><input type="color" id="pHl" value="${rgb2hex(sec ? sec.color : s.hl)}"></div>`);
+    const cizgiKutu = `<div class="row"><label class="doku-sec"><input type="checkbox" id="pCizgi" ${St.cizgisiz ? 'checked' : ''}> Kesik çizgileri gizle</label></div>`;
+    if (sec && sec.t !== 'note') h += bol('konum', 'Konum', '✥', `<div class="ok-sat"><button class="btn ic" data-ok="-1,0" title="Sola (←)">◀</button><button class="btn ic" data-ok="0,-1" title="Yukarı (↑)">▲</button><button class="btn ic" data-ok="0,1" title="Aşağı (↓)">▼</button><button class="btn ic" data-ok="1,0" title="Sağa (→)">▶</button></div>
+      <div class="hint">Yön tuşları: 0,5 pt · Shift: 5 pt${metinSec ? ' · yazarken Alt+yön' : ''}${metinSec ? '<br>Tutamaklar: köşeler büyütür/küçültür, ✥ sürükleyerek taşır.' : ''}</div>${cizgiKutu}`);
+    else h += bol('ekran', 'Ekran', '⬚', cizgiKutu);
+    if (sec) h += bol('nesne', 'Seçili nesne', '●', `<div class="row"><button class="btn dol" id="pDel">${ic('trash', 16)}Sil</button>${sec.t === 'note' ? `<button class="btn dol" id="pNote">${ic('note', 16)}Notu düzenle</button>` : ''}</div>`);
     const notlar = p.edits.filter(e => e.t === 'note');
-    if (notlar.length) h += `<h3>Bu sayfadaki notlar</h3><div class="list">${notlar.map(e => `<div class="it" data-not="${e.id}">${esc(e.text.slice(0, 120))}${e.author ? `<small>${esc(e.author)}</small>` : ''}</div>`).join('')}</div>`;
-    h += `<h3>Sayfa ${St.cur + 1}</h3><div class="hint" style="margin:0">${Math.round((p.resize ? p.resize.w : p.w) / 72 * 25.4)} × ${Math.round((p.resize ? p.resize.h : p.h) / 72 * 25.4)} mm · ${Render.rot(p)}° · ${p.edits.length} düzenleme${St.sel.size ? `<br>${St.sel.size} sayfa seçili — sayfa işlemleri seçilenlere uygulanır` : ''}</div>`;
+    if (notlar.length) h += bol('notlar', 'Bu sayfadaki notlar', '✎', `<div class="list">${notlar.map(e => `<div class="it" data-not="${e.id}">${esc(e.text.slice(0, 120))}${e.author ? `<small>${esc(e.author)}</small>` : ''}</div>`).join('')}</div>`, String(notlar.length));
+    h += bol('sayfa', `Sayfa ${St.cur + 1}`, '▭', `<div class="hint" style="margin:0">${Math.round((p.resize ? p.resize.w : p.w) / 72 * 25.4)} × ${Math.round((p.resize ? p.resize.h : p.h) / 72 * 25.4)} mm · ${Render.rot(p)}° · ${p.edits.length} düzenleme${St.sel.size ? `<br>${St.sel.size} sayfa seçili — sayfa işlemleri seçilenlere uygulanır` : ''}</div>`);
     el.innerHTML = h;
+    $$('.pk-b', el).forEach(b => b.onclick = () => { const sc = b.parentNode, kapali = sc.classList.toggle('kapali'); b.setAttribute('aria-expanded', String(!kapali)); let o = {}; try { o = JSON.parse(localStorage.getItem('pe-pk') || '{}'); } catch (x) { } if (kapali) o[sc.dataset.k] = 1; else delete o[sc.dataset.k]; try { localStorage.setItem('pe-pk', JSON.stringify(o)); } catch (x) { } });
     const uygula = fn => { const hedef = sec || null; if (hedef) { Hist.kaydet(); fn(hedef); Overlay.ciz(); Thumbs.yenile(p); } fn(null); };
     const on = (id, ev, fn) => { const x = $('#' + id, el); if (x) x.addEventListener(ev, fn); };
     on('pStil', 'change', e => { const st = stiller[+e.target.value]; if (!st) return; s.font = st.font; s.b = st.b; s.i = st.i; s.size = st.size; if (sec && sec.font) { Hist.kaydet(); Object.assign(sec, { font: st.font, b: st.b, i: st.i, size: st.size }); Fonts.loadCss(st.font, st.b, st.i).then(() => Overlay.ciz()); } this.ciz(); });
@@ -797,6 +984,19 @@ const Props = {
     on('pFillOn', 'change', e => { s.fill = e.target.checked ? hex2rgb($('#pFill', el).value) : null; if (sec) { sec.fill = s.fill ? s.fill.slice() : null; Overlay.ciz(); } });
     on('pFill', 'input', e => { if ($('#pFillOn', el).checked) { s.fill = hex2rgb(e.target.value); if (sec) { sec.fill = s.fill.slice(); Overlay.ciz(); } } });
     on('pHl', 'input', e => { s.hl = hex2rgb(e.target.value); if (sec && sec.t === 'highlight') { sec.color = s.hl.slice(); Overlay.ciz(); } });
+    on('pYog', 'input', e => { if (!sec) return; if (!e.target._k) { Hist.kaydet(); e.target._k = 1; } sec.opacity = +e.target.value; const dd = $('#pYogD', el); if (dd) dd.textContent = Math.round(sec.opacity * 100) + '%'; const o = $(`#ov [data-id="${sec.id}"]`); if (o) o.style.color = cssRgb(sec.color, sec.opacity); });
+    on('pYog', 'change', () => { Overlay.ciz(); Thumbs.yenile(p); });
+    const zeminVer = rgbv => { if (!sec) return; Hist.kaydet(); if (sec.cover) sec.cover.color = rgbv.slice(); else { sec.bg = rgbv.slice(); const zo = $('#pZOn', el); if (zo) zo.checked = true; } Overlay.ciz(); Thumbs.yenile(p); };
+    on('pZemin', 'change', e => zeminVer(hex2rgb(e.target.value)));
+    on('pZOn', 'change', e => { if (!sec) return; Hist.kaydet(); sec.bg = e.target.checked ? hex2rgb($('#pZemin', el).value) : null; Overlay.ciz(); Thumbs.yenile(p); });
+    on('pDamla', 'click', () => { St.damla = !St.damla; St.damlaHedef = St.damla ? sec.id : null; this.ciz(); if (St.damla) toast('Sayfada rengini almak istediğin noktaya dokun'); });
+    $$('[data-ok]', el).forEach(b => { let t = null; const bas = () => { const [x, y] = b.dataset.ok.split(',').map(Number); Overlay.kaydir(x, y, 1, false); };
+      b.addEventListener('pointerdown', ev => { ev.preventDefault(); bas(); t = setInterval(bas, 120); }); ['pointerup', 'pointerleave', 'pointercancel'].forEach(o => b.addEventListener(o, () => clearInterval(t))); });
+    on('pCizgi', 'change', e => Overlay.cizgiDegis(e.target.checked));
+    on('pGeri', 'click', () => Hist.geri(-1)); on('pIleri', 'click', () => Hist.geri(1));
+    on('pDoku', 'change', e => { if (!sec) return; Hist.kaydet(); sec.doku = e.target.checked ? (sec.dokuV || .12) : 0; Overlay.ciz(); Thumbs.yenile(p); this.ciz(); });
+    on('pToz', 'input', e => { if (!sec) return; if (!e.target._k) { Hist.kaydet(); e.target._k = 1; } sec.doku = sec.dokuV = +e.target.value; const o = $(`#ov [data-id="${sec.id}"]`); if (o) Doku.ekran(o, sec, View.v); });
+    on('pToz', 'change', () => Thumbs.yenile(p));
     on('pDel', 'click', () => Overlay.silSecili());
     on('pNote', 'click', () => Overlay.notAc(sec));
     $$('[data-not]', el).forEach(x => x.onclick = () => Overlay.notAc(p.edits.find(e => e.id === x.dataset.not)));
@@ -925,7 +1125,10 @@ const Export = {
           case 'ink': { const q = e.pts.map(z => N(z[0], z[1])); if (q.length < 2) break; const path = 'M ' + q.map(z => `${z[0].toFixed(2)} ${(-z[1]).toFixed(2)}`).join(' L ');
             pg.drawSvgPath(path, { x: 0, y: 0, borderColor: rgb(...e.color), borderWidth: e.lw * S, borderOpacity: e.opacity ?? 1, borderLineCap: L.LineCapStyle ? L.LineCapStyle.Round : undefined }); break; }
           case 'text': case 'replace': { if (!e.text || !e.text.trim()) break; const f = await font(e.font, e.b, e.i); const lines = String(e.text).split('\n');
-            lines.forEach((s, i) => { if (!s) return; const o = N(e.x, e.y - i * e.size * 1.2); pg.drawText(s, { x: o[0], y: o[1], size: e.size * S, font: f, color: rgb(...e.color), rotate: degrees(rotT) }); }); break; }
+            if (e.t === 'text' && e.bg) { const gw = Math.max(...lines.map(q => { try { return f.widthOfTextAtSize(q, e.size); } catch (x) { return 0; } })), a = N(e.x - e.size * .1, e.y - (lines.length - 1) * e.size * 1.2 - e.size * .32), b = N(e.x + gw + e.size * .1, e.y + e.size * .88);
+              pg.drawRectangle({ x: Math.min(a[0], b[0]), y: Math.min(a[1], b[1]), width: Math.abs(b[0] - a[0]), height: Math.abs(b[1] - a[1]), color: rgb(...e.bg) }); }
+            if (e.doku) { const q = await Doku.png(e), im = await out.embedPng(q.bytes), a = N(q.x, q.ust - q.h), b = N(q.x + q.w, q.ust); pg.drawImage(im, { x: Math.min(a[0], b[0]), y: Math.min(a[1], b[1]), width: Math.abs(b[0] - a[0]), height: Math.abs(b[1] - a[1]), rotate: degrees(rotT) }); break; }
+            lines.forEach((s, i) => { if (!s) return; const o = N(e.x, e.y - i * e.size * 1.2); pg.drawText(s, { x: o[0], y: o[1], size: e.size * S, font: f, color: rgb(...e.color), opacity: e.opacity ?? 1, rotate: degrees(rotT) }); }); break; }
           case 'image': { const im = e.type2 === 'png' ? await out.embedPng(e.bytes) : await out.embedJpg(e.bytes); const k = kutu(); pg.drawImage(im, { ...k, rotate: degrees(rotT) }); break; }
           case 'note': { const a = N(e.x, e.y); const annot = out.context.obj({ Type: 'Annot', Subtype: 'Text', Rect: [a[0], a[1], a[0] + 18, a[1] + 18], Contents: PDFHexString.fromText(e.text), T: PDFHexString.fromText(e.author || St.meta.author || ''), Name: 'Comment', C: [0.96, 0.79, 0.27], F: 4, Open: false, M: PDFHexString.fromText(new Date().toISOString()) });
             const ref = out.context.register(annot); pg.node.addAnnot(ref); break; }
@@ -943,7 +1146,7 @@ const Export = {
     out.setCreator('PDF Düzenleyici'); out.setProducer('PDF Düzenleyici (pdf-lib)'); out.setModificationDate(new Date());
     if (sikistir !== 'yok') await Sikistir.resimler(out, sikistir, (a, b) => ilerle && ilerle(liste.length, liste.length, `Görseller sıkıştırılıyor ${a}/${b}`));
     if (St.protect) out.encrypt({ userPassword: St.protect.user, ownerPassword: St.protect.owner || St.protect.user, permissions: St.protect.izin });
-    return out.save({ useObjectStreams: true, addDefaultPage: false });
+    return out.save({ useObjectStreams: false, addDefaultPage: false });   /* 1.6: klasik xref tablosu — BelgeNet gibi eski PDF okuyucular önizleyebilsin */
   },
   nokta(T, x, y) {
     /* kaynak kullanıcı uzayı → dönmüş ve ölçeklenmiş yerleşim */
@@ -998,7 +1201,7 @@ const Sikistir = {
       const cx = c.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, c.width, c.height); await pg.render({ canvasContext: cx, viewport: v }).promise;
       const jb = new Uint8Array(await (await new Promise(r => c.toBlob(r, 'image/jpeg', q))).arrayBuffer()); c.width = c.height = 0; const im = await out.embedJpg(jb);
       out.addPage([v1.width, v1.height]).drawImage(im, { x: 0, y: 0, width: v1.width, height: v1.height }); pg.cleanup(); }
-    doc.destroy(); return out.save({ useObjectStreams: true });
+    doc.destroy(); return out.save({ useObjectStreams: false });
   }
 };
 
@@ -1058,6 +1261,53 @@ const Onizle = {
         const c = x.target; c.width = v.width; c.height = v.height; await pg.render({ canvasContext: c.getContext('2d'), viewport: v }).promise; }), { root: $('.dlg-b', d.el), rootMargin: '600px' });
       for (let i = 1; i <= doc.numPages; i++) { const c = document.createElement('canvas'); c.dataset.p = i; c.width = 400; c.height = 560; kap.appendChild(c); io.observe(c); }
     } catch (e) { $('#oBilgi', d.el).textContent = 'Önizleme gösterilemedi (' + (e.message || e) + '), ama dosya kaydedilebilir.'; }
+  }
+};
+
+/* ---------------- 1.4: baskı önizleme ----------------
+   Sayfalar kaydedilecek PDF'ten üretilir (düzenlemeler, filigran, tozlu yazı dahil) ve kağıt görünümünde gösterilir; Yazdır ile yazıcıya gider. */
+const Baski = {
+  async ac() {
+    if (!St.pages.length) { toast('Önce bir PDF yükle'); return; }
+    const odak = document.activeElement; if (odak && odak.blur) odak.blur();
+    Busy.ac('Baskı önizlemesi hazırlanıyor…', true); let bytes;
+    try { const prot = St.protect; St.protect = null; try { bytes = await Export.olustur(St.pages, { kaydet: false }, (i, n) => Busy.guncelle(`Sayfa ${Math.min(i + 1, n)} / ${n}`, i / n)); } finally { St.protect = prot; } }
+    catch (e) { Busy.kapat(); toast('Önizleme hazırlanamadı: ' + (e.message || e), 'err', 6000); return; }
+    Busy.kapat();
+    let doc = null, olcek = 1, yalniz = false;
+    const d = Dlg.ac({ baslik: 'Baskı önizleme', genis: true,
+      govde: `<div class="bk-arac"><span id="bkBilgi" class="hint" style="margin:0">Hazırlanıyor…</span><span class="bk-bos"></span>
+        <label class="doku-sec"><input type="checkbox" id="bkTek"> Yalnız bu sayfa (${St.cur + 1})</label>
+        <button class="btn ic" id="bkK" title="Küçült">−</button><b id="bkY" class="bk-y">100%</b><button class="btn ic" id="bkB" title="Büyüt">+</button></div>
+        <div class="bk-masa" id="bkMasa"></div>`,
+      butonlar: [{ metin: 'Kapat', fn: () => { } }, { metin: 'PDF olarak kaydet', fn: async () => { await Kaydet.dosya(Kaydet.ad('duzenlendi'), bytes, 'application/pdf'); return false; } },
+        { metin: `<span style="display:inline-flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg> Yazdır</span>`, pri: true, fn: () => { this.yazdir(doc, yalniz ? [St.cur + 1] : null); return false; } }],
+      kapaninca: () => { try { doc && doc.destroy(); } catch (e) { } } });
+    const masa = $('#bkMasa', d.el);
+    const ciz = async () => { if (!doc) return; masa.innerHTML = ''; const nolar = yalniz ? [Math.min(St.cur + 1, doc.numPages)] : [...Array(doc.numPages).keys()].map(i => i + 1);
+      const gen = Math.max(200, masa.clientWidth - 48);
+      for (const n of nolar) { const pg = await doc.getPage(n), v0 = pg.getViewport({ scale: 1 }), sc = Math.min(1.6, gen / v0.width) * olcek, v = pg.getViewport({ scale: sc * (window.devicePixelRatio || 1) });
+        const kap = document.createElement('div'); kap.className = 'bk-kagit'; const c = document.createElement('canvas'); c.width = v.width; c.height = v.height; c.style.width = (v.width / (window.devicePixelRatio || 1)) + 'px';
+        const no = document.createElement('div'); no.className = 'bk-no'; no.textContent = `Sayfa ${n} / ${doc.numPages} · ${Math.round(v0.width / 72 * 25.4)} × ${Math.round(v0.height / 72 * 25.4)} mm`;
+        kap.appendChild(c); kap.appendChild(no); masa.appendChild(kap); await pg.render({ canvasContext: c.getContext('2d'), viewport: v }).promise; }
+      $('#bkY', d.el).textContent = Math.round(olcek * 100) + '%';
+      if (!yalniz && St.cur > 0) { const k = masa.children[St.cur]; if (k) k.scrollIntoView({ block: 'start' }); } };
+    $('#bkTek', d.el).onchange = e => { yalniz = e.target.checked; ciz(); };
+    $('#bkK', d.el).onclick = () => { olcek = clamp(olcek / 1.2, .3, 3); ciz(); }; $('#bkB', d.el).onclick = () => { olcek = clamp(olcek * 1.2, .3, 3); ciz(); };
+    try { doc = await pdfjsLib.getDocument({ data: bytes.slice(0) }).promise; $('#bkBilgi', d.el).textContent = `${doc.numPages} sayfa · kağıtta böyle görünecek`; await ciz(); }
+    catch (e) { $('#bkBilgi', d.el).textContent = 'Önizleme gösterilemedi: ' + (e.message || e); }
+  },
+  /* yazdırma: sayfalar 200 dpi görüntüye çevrilir, yalnız onlar basılır (kenar boşluğu eklenmez) */
+  async yazdir(doc, nolar) {
+    if (!doc) return; Busy.ac('Yazdırmaya hazırlanıyor…', true);
+    try { nolar = nolar || [...Array(doc.numPages).keys()].map(i => i + 1); const alan = document.createElement('div'); alan.id = 'bk-yazdir'; let ilk = null;
+      for (let i = 0; i < nolar.length; i++) { Busy.guncelle(`Sayfa ${i + 1} / ${nolar.length}`, i / nolar.length); const pg = await doc.getPage(nolar[i]), v0 = pg.getViewport({ scale: 1 }), v = pg.getViewport({ scale: 200 / 72 });
+        const c = document.createElement('canvas'); c.width = v.width; c.height = v.height; const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); await pg.render({ canvasContext: g, viewport: v }).promise;
+        const im = new Image(); im.src = c.toDataURL('image/jpeg', .92); im.style.width = (v0.width / 72 * 25.4) + 'mm'; im.style.height = (v0.height / 72 * 25.4) + 'mm'; alan.appendChild(im); if (!ilk) ilk = v0; }
+      const st = document.createElement('style'); st.id = 'bk-yazdir-stil'; st.textContent = `@page{size:${(ilk.width / 72 * 25.4).toFixed(1)}mm ${(ilk.height / 72 * 25.4).toFixed(1)}mm;margin:0}@media print{body>*:not(#bk-yazdir){display:none!important}#bk-yazdir{display:block!important}#bk-yazdir img{display:block;page-break-after:always;break-after:page}#bk-yazdir img:last-child{page-break-after:auto;break-after:auto}}@media screen{#bk-yazdir{display:none}}`;
+      document.head.appendChild(st); document.body.appendChild(alan); await Promise.all([...alan.querySelectorAll('img')].map(im => im.decode().catch(() => { })));
+      Busy.kapat(); const temizle = () => { alan.remove(); st.remove(); window.removeEventListener('afterprint', temizle); }; window.addEventListener('afterprint', temizle); setTimeout(() => window.print(), 60); setTimeout(temizle, 120000);
+    } catch (e) { Busy.kapat(); toast('Yazdırılamadı: ' + (e.message || e), 'err', 6000); }
   }
 };
 
@@ -1184,8 +1434,8 @@ const UI = {
     document.title = 'PDF Düzenleyici';
     $('#app').innerHTML = `
     <header class="top"><button class="btn ic ghost mob" id="bSide" title="Sayfalar" aria-label="Sayfalar">${ic('pages')}</button>
-      <div class="logo">${ic('logo', 24)}<span>PDF Düzenleyici<small class="surum-et" style="font:500 11px/1.2 system-ui,sans-serif;opacity:.65;margin-left:8px;letter-spacing:.02em;white-space:nowrap">sürüm 1.1 · 15.10.2026</small></span></div><div class="docname" id="docName"></div>
-      <button class="btn ic" id="bUndo" title="Geri al (Ctrl+Z)" aria-label="Geri al" disabled>${ic('undo')}</button><button class="btn ic" id="bRedo" title="Yinele (Ctrl+Y)" aria-label="Yinele" disabled>${ic('redo')}</button>
+      <div class="logo">${ic('logo', 24)}<span>PDF Düzenleyici<small class="surum-et" style="font:500 11px/1.2 system-ui,sans-serif;opacity:.65;margin-left:8px;letter-spacing:.02em;white-space:nowrap">sürüm 1.7 · 27.10.2026</small></span></div><div class="docname" id="docName"></div>
+      <button class="btn ic hb" id="bUndo" title="Geri al (Ctrl+Z)" aria-label="Geri al" disabled>${ic('undo')}<span class="hb-y">Geri</span></button><button class="btn ic hb" id="bRedo" title="Yinele (Ctrl+Y)" aria-label="Yinele" disabled>${ic('redo')}<span class="hb-y">İleri</span></button><button class="btn ic hb" id="bCizgi" title="Kesik çizgileri gizle / göster" aria-pressed="false"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="3 3"><rect x="4" y="5" width="16" height="14" rx="1"/></svg><span class="hb-y">Çizgiler</span></button><button class="btn ic hb" id="bBaski" title="Baskı önizleme — sayfanın yazıcıdan çıkacak hâli"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg><span class="hb-y">Baskı önizleme</span></button>
       <button class="btn" id="bOpen" title="PDF veya görsel ekle">${ic('open')}<span class="lbl">Ekle</span></button>
       <button class="btn pri" id="bSave" disabled>${ic('save')}<span class="lbl">Kaydet</span></button>
       <button class="btn ic ghost mob" id="bProps" title="Araç ayarları" aria-label="Araç ayarları">${ic('props')}</button></header>
@@ -1218,6 +1468,7 @@ const UI = {
     $('#bOpen').onclick = ekle; $('#bOpen2').onclick = ekle;
     $('#bSave').onclick = e => Islem.kaydetMenu(e.currentTarget);
     $('#bUndo').onclick = () => Hist.geri(-1); $('#bRedo').onclick = () => Hist.geri(1);
+    $('#bBaski').onclick = () => Baski.ac(); $('#bCizgi').onclick = () => Overlay.cizgiDegis();
     $('#bSide').onclick = () => this.panel('side'); $('#bProps').onclick = () => this.panel('props');
     $('#tools').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.tool) { if (!St.pages.length) { toast('Önce bir PDF yükle'); return; } this.arac(b.dataset.tool); return; } this.eylem(b.dataset.act); });
     $('#nPrev').onclick = () => View.git(St.cur - 1); $('#nNext').onclick = () => View.git(St.cur + 1);
@@ -1229,10 +1480,13 @@ const UI = {
     document.addEventListener('keydown', e => {
       const yaz = e.target.closest && e.target.closest('input,textarea,select,[contenteditable="true"]');
       const k = e.key.toLowerCase(), cm = e.ctrlKey || e.metaKey;
-      if (cm && k === 'z' && !e.shiftKey && !yaz) { e.preventDefault(); Hist.geri(-1); return; }
-      if (cm && (k === 'y' || (k === 'z' && e.shiftKey)) && !yaz) { e.preventDefault(); Hist.geri(1); return; }
+      const txtObj = e.target.closest && e.target.closest('#ov .obj.txt');   /* 1.3: düzenlenen metnin içindeyken de çalışır */
+      if (cm && k === 'z' && !e.shiftKey && (!yaz || txtObj)) { e.preventDefault(); if (txtObj) txtObj.blur(); Hist.geri(-1); return; }
+      if (cm && (k === 'y' || (k === 'z' && e.shiftKey)) && (!yaz || txtObj)) { e.preventDefault(); if (txtObj) txtObj.blur(); Hist.geri(1); return; }
       if (cm && k === 's') { e.preventDefault(); if (St.pages.length) Kaydet.pdf(St.pages, St.docs.size > 1 ? 'birlesik' : 'duzenlendi'); return; }
       if (cm && k === 'o') { e.preventDefault(); $('#bOpen').click(); return; }
+      const yon = { arrowleft: [-1, 0], arrowright: [1, 0], arrowup: [0, -1], arrowdown: [0, 1] }[k];
+      if (yon && St.selObj && !document.querySelector('.modal') && (!yaz || (txtObj && e.altKey))) { e.preventDefault(); Overlay.kaydir(yon[0], yon[1], e.shiftKey ? 10 : 1, !!txtObj); return; }
       if (yaz || document.querySelector('.modal')) return;
       if ((k === 'delete' || k === 'backspace') && St.selObj) { e.preventDefault(); Overlay.silSecili(); return; }
       if (k === 'arrowright' || k === 'pagedown') { View.git(St.cur + 1); e.preventDefault(); }
@@ -1252,7 +1506,7 @@ const UI = {
   arac(t) { St.tool = t; if (t !== 'select') St.selObj = null; $$('#tools [data-tool]').forEach(b => b.setAttribute('aria-pressed', b.dataset.tool === t)); Overlay.ciz(); Props.ciz(); },
   belgeVar() { $('#empty').classList.add('hid'); $('#page').classList.remove('hid'); $('#bSave').disabled = false; $('#docName').textContent = [...St.docs.values()].map(d => d.name).join(' + ') || 'Görsellerden PDF'; this.durum(); },
   durum() { $('#durum').textContent = (St.protect ? '🔒 parolalı kaydedilecek · ' : '') + (St.watermark ? 'filigran var' : ''); },
-  histBtn() { $('#bUndo').disabled = !Hist.past.length; $('#bRedo').disabled = !Hist.future.length; },
+  histBtn() { $('#bUndo').disabled = !Hist.past.length; $('#bRedo').disabled = !Hist.future.length; const g = $('#pGeri'), i = $('#pIleri'); if (g) g.disabled = !Hist.past.length; if (i) i.disabled = !Hist.future.length; },
   panel(ad, ac) { const el = $('#' + ad); const on = ac == null ? !el.classList.contains('open') : ac; el.classList.toggle('open', on);
     if (on) { const o = ad === 'side' ? 'props' : 'side'; $('#' + o).classList.remove('open'); }
     let sc = $('#scrim'); const acik = $$('.side.open,.props.open').length > 0 && innerWidth <= 860;
@@ -1269,4 +1523,4 @@ const UI = {
 
 /* ---------------- başlat ---------------- */
 document.addEventListener('DOMContentLoaded', () => { try { UI.kur(); } catch (e) { document.body.innerHTML = '<p style="padding:20px">Uygulama başlatılamadı: ' + esc(e.message) + '</p>'; } });
-</script><script>if('serviceWorker' in navigator&&/github\.io$/.test(location.hostname)&&window.top===window)navigator.serviceWorker.register('sw.js').catch(function(){})</script></body></html>
+</script><script>if('serviceWorker' in navigator&&/(github\.io|pages\.dev)$/.test(location.hostname)&&window.top===window)navigator.serviceWorker.register('sw.js').catch(function(){})</script></body></html>
