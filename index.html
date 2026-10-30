@@ -106,6 +106,14 @@ button{cursor:pointer;border:0;background:none}
 .tk-n[data-y="-1,1"]{left:-7px;bottom:-7px;cursor:nesw-resize}.tk-n[data-y="1,1"]{right:-7px;bottom:-7px;cursor:nwse-resize}
 .tk-tasi{position:absolute;left:50%;top:-30px;transform:translateX(-50%);width:26px;height:26px;border-radius:50%;background:var(--acc);color:#fff;font:700 15px/26px system-ui,sans-serif;text-align:center;pointer-events:auto;touch-action:none;cursor:move;box-shadow:0 2px 6px rgba(0,0,0,.25)}
 .tk-tasi::after{content:"";position:absolute;inset:-8px}
+#bUndo,#bRedo,#bCizgi,#bBaski,#bOpen,#bSave{display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:auto!important;min-width:58px;height:auto!important;padding:5px 6px!important;border-radius:8px;border:0!important;background:transparent!important;box-shadow:none!important;font-size:11px!important;font-weight:400!important;color:var(--ink2)!important}
+#bUndo svg,#bRedo svg,#bCizgi svg,#bBaski svg,#bOpen svg,#bSave svg{width:20px;height:20px;color:var(--ink)}
+#bUndo:hover,#bRedo:hover,#bCizgi:hover,#bBaski:hover,#bOpen:hover,#bSave:hover{background:var(--panel2)!important}
+#bUndo:disabled,#bRedo:disabled,#bSave:disabled{opacity:.4}
+#bUndo .hb-y,#bRedo .hb-y,#bCizgi .hb-y,#bBaski .hb-y,#bOpen .lbl,#bSave .lbl{display:inline!important;font-size:11px;font-weight:400}
+#bCizgi[aria-pressed="true"]{background:var(--acc2)!important;color:var(--acc)!important}#bCizgi[aria-pressed="true"] svg{color:var(--acc)}
+#bSave{color:var(--acc)!important;font-weight:700!important}#bSave svg{color:var(--acc)}#bSave .lbl{font-weight:700}
+@media (max-width:560px){header{gap:2px!important;overflow-x:auto;scrollbar-width:none}#bUndo,#bRedo,#bCizgi,#bBaski,#bOpen,#bSave{min-width:36px;flex:0 1 auto;padding:3px 2px!important;font-size:9.5px!important;letter-spacing:-.2px}#bUndo svg,#bRedo svg,#bCizgi svg,#bBaski svg,#bOpen svg,#bSave svg{width:18px;height:18px}#bUndo .hb-y,#bRedo .hb-y,#bCizgi .hb-y,#bBaski .hb-y,#bOpen .lbl,#bSave .lbl{font-size:9.5px}#docName{display:none}}
 .hb{width:auto!important;padding-left:8px;padding-right:10px;gap:4px}.hb-y{font-size:12px;font-weight:600}
 @media (max-width:520px){.hb-y{display:none}.hb{padding:0 6px}}
 #ov.temiz .obj.txt,#ov.temiz .obj.txt:focus,#ov.temiz .obj.sel{outline:none!important}#ov.temiz .tk{border-color:transparent}#ov.temiz .line-box{outline:none!important;border-color:transparent!important;box-shadow:none!important}
@@ -529,7 +537,7 @@ const Paint = {
     const P = (x, y) => v.convertToViewportPoint(x, y), sc = v.scale;
     const kutu = r => { const a = v.convertToViewportRectangle([r.x, r.y, r.x + r.w, r.y + r.h]); return [Math.min(a[0], a[2]), Math.min(a[1], a[3]), Math.abs(a[2] - a[0]), Math.abs(a[3] - a[1])]; };
     c.save();
-    if (e.cover) { c.fillStyle = cssRgb(e.cover.color); c.fillRect(...kutu(e.cover)); }
+    if (e.cover) { const im = e.cover.img && ZeminDoku.resim(e.cover.img); if (im && im.complete && im.naturalWidth) c.drawImage(im, ...kutu(e.cover)); else { c.fillStyle = cssRgb(e.cover.color); c.fillRect(...kutu(e.cover)); } }
     switch (e.t) {
       case 'whiteout': c.fillStyle = cssRgb(e.color); c.fillRect(...kutu(e)); break;
       case 'highlight': c.globalCompositeOperation = 'multiply'; c.fillStyle = cssRgb(e.color, .45); c.fillRect(...kutu(e)); break;
@@ -727,6 +735,38 @@ const View = {
   sigdir(m) { St.fitMode = m; this.ciz(); }
 };
 
+/* ---------------- 1.9: orijinal zemin (doku) örtüsü ----------------
+   Eski yazının bulunduğu bölge sayfadan yüksek çözünürlükte alınır; mürekkep pikselleri çevredeki kağıt pikselleriyle doldurulur,
+   kağıdın kumlanması (gürültüsü) eklenir. Böylece örtü düz renk leke gibi değil, aynı kağıt gibi görünür. */
+const ZeminDoku = {
+  async uret(p, k) {
+    try { if (!p.src.doc || (View.v && View.v.rotation)) return null; const pg = await St.docs.get(p.src.doc).pdf.getPage(p.src.index + 1), S = 4;
+      const vp = pg.getViewport({ scale: S }), a = vp.convertToViewportRectangle([k.x, k.y, k.x + k.w, k.y + k.h]);
+      const x0 = Math.floor(Math.min(a[0], a[2])), y0 = Math.floor(Math.min(a[1], a[3])), W = Math.max(2, Math.ceil(Math.abs(a[2] - a[0]))), H = Math.max(2, Math.ceil(Math.abs(a[3] - a[1])));
+      if (W * H > 4e6) return null; const c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d', { willReadFrequently: true });
+      g.fillStyle = '#fff'; g.fillRect(0, 0, W, H); await pg.render({ canvasContext: g, viewport: vp, transform: [1, 0, 0, 1, -x0, -y0] }).promise;
+      const im = g.getImageData(0, 0, W, H), d = im.data, N = W * H, lum = new Float32Array(N);
+      for (let i = 0; i < N; i++) lum[i] = d[i * 4] * .3 + d[i * 4 + 1] * .59 + d[i * 4 + 2] * .11;
+      const sira = Array.from(lum).sort((x, y) => x - y), zem = sira[Math.floor(N * .8)], esik = zem - 38;
+      let m = new Uint8Array(N); for (let i = 0; i < N; i++) if (lum[i] < esik) m[i] = 1;
+      for (let t = 0; t < 2; t++) { const m2 = m.slice(); for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const i = y * W + x; if (m[i]) continue; if ((x > 0 && m[i - 1]) || (x < W - 1 && m[i + 1]) || (y > 0 && m[i - W]) || (y < H - 1 && m[i + W])) m2[i] = 1; } m = m2; }
+      let s1 = 0, s2 = 0, n = 0; for (let i = 0; i < N; i++) if (!m[i]) { s1 += lum[i]; s2 += lum[i] * lum[i]; n++; }
+      if (n < N * .15) return null; const sd = Math.min(18, Math.sqrt(Math.max(0, s2 / n - (s1 / n) ** 2)));
+      /* mürekkebi çevreden doldur (kenardan içe doğru yayılım) */
+      const dolu = m.slice(); let kalan = 0; for (let i = 0; i < N; i++) kalan += m[i];
+      for (let tur = 0; kalan && tur < 400; tur++) { const yeni = []; for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const i = y * W + x; if (!m[i]) continue; let r = 0, gg = 0, b = 0, k2 = 0;
+          for (const [dx, dy] of [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [1, 1], [-1, 1], [1, -1]]) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) continue; const j = yy * W + xx; if (m[j]) continue; r += d[j * 4]; gg += d[j * 4 + 1]; b += d[j * 4 + 2]; k2++; }
+          if (k2) yeni.push([i, r / k2, gg / k2, b / k2]); }
+        if (!yeni.length) break; for (const [i, r, gg, b] of yeni) { d[i * 4] = r; d[i * 4 + 1] = gg; d[i * 4 + 2] = b; m[i] = 0; kalan--; } }
+      /* doldurulan yerlere kağıt kumlaması */
+      const R = Doku.rnd(k.x + ':' + k.y); for (let i = 0; i < N; i++) { if (!dolu[i]) continue; const z = (R() + R() + R() - 1.5) * sd * 1.15; d[i * 4] += z; d[i * 4 + 1] += z; d[i * 4 + 2] += z; }
+      g.putImageData(im, 0, 0); return c.toDataURL('image/png');
+    } catch (e) { console.warn('zemin doku', e); return null; }
+  },
+  bytes(u) { const b = atob(u.split(',')[1]), a = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) a[i] = b.charCodeAt(i); return a; },
+  resim(u) { const c = this._c || (this._c = new Map()); if (!c.has(u)) { const im = new Image(); im.onload = () => { try { Thumbs.yenile(St.pages[St.cur]); } catch (e) { } }; im.src = u; c.set(u, im); } return c.get(u); }
+};
+
 /* ---------------- 1.8: satır içinde kısmen kalın yazı ----------------
    e.parca = [{s, b}] (s içinde '\n' olabilir); yalnız karışık kalınlık varsa tutulur, yoksa e.b geçerlidir. */
 const Parca = {
@@ -786,7 +826,7 @@ const Overlay = {
     p.edits.forEach((e, j) => {
       const secili = St.selObj === e.id;
       if (e.t === 'text' || e.t === 'replace') {
-        if (e.cover) { const k = kutu(e.cover); const d = document.createElement('div'); d.className = 'obj'; Object.assign(d.style, { left: k.l + 'px', top: k.t + 'px', width: k.w + 'px', height: k.h + 'px', background: cssRgb(e.cover.color), pointerEvents: 'none' }); ov.appendChild(d); }
+        if (e.cover) { const k = kutu(e.cover); const d = document.createElement('div'); d.className = 'obj'; d.dataset.kapak = e.id; Object.assign(d.style, { left: k.l + 'px', top: k.t + 'px', width: k.w + 'px', height: k.h + 'px', background: cssRgb(e.cover.color), pointerEvents: 'none' }); if (e.cover.img) Object.assign(d.style, { backgroundImage: `url(${e.cover.img})`, backgroundSize: '100% 100%' }); ov.appendChild(d); }
         const [x, y] = v.convertToViewportPoint(e.x, e.y), fs = e.size * v.scale; const d = document.createElement('div'); d.className = 'obj txt' + (secili ? ' sel' : ''); d.dataset.id = e.id; d.contentEditable = St.tool === 'select' ? 'false' : 'true'; d.spellcheck = false;
         Object.assign(d.style, { left: x + 'px', top: (y - fs * .88) + 'px', fontFamily: Fonts.stack(e.font), fontSize: fs + 'px', lineHeight: (fs * 1.2) + 'px', fontWeight: e.b ? 700 : 400, fontStyle: e.i ? 'italic' : 'normal', color: cssRgb(e.color, e.opacity ?? 1), background: (e.t === 'text' && e.bg) ? cssRgb(e.bg) : '', transformOrigin: `0 ${fs * .88}px`, transform: v.rotation ? `rotate(${v.rotation}deg)` : '' });
         if (e.parca && e.parca.length) { d.innerHTML = Parca.html(e); Fonts.loadCss(e.font, true, e.i); Fonts.loadCss(e.font, false, e.i); } else d.textContent = e.text; ov.appendChild(d); Fonts.loadCss(e.font, e.b, e.i);
@@ -859,7 +899,7 @@ const Overlay = {
       const p = St.pages[St.cur], e = p && p.edits.find(x => x.id === St.damlaHedef); St.damla = false;
       if (e && View.v) { const r = ov.getBoundingClientRect(), cv = $('#pageCv'), dpr = cv.width / View.v.width, px = Math.floor((ev.clientX - r.left) * dpr), py = Math.floor((ev.clientY - r.top) * dpr);
         try { const d = cv.getContext('2d').getImageData(Math.max(0, px - 1), Math.max(0, py - 1), 3, 3).data; const t = [0, 0, 0]; let n = 0; for (let i = 0; i < d.length; i += 4) { t[0] += d[i]; t[1] += d[i + 1]; t[2] += d[i + 2]; n++; }
-          const renk = t.map(x => x / n / 255); Hist.kaydet(); if (e.cover) e.cover.color = renk; else e.bg = renk; St.selObj = e.id; toast('Zemin rengi alındı', 'ok'); } catch (x) { toast('Renk okunamadı', 'err'); } }
+          const renk = t.map(x => x / n / 255); Hist.kaydet(); if (e.cover) { e.cover.color = renk; delete e.cover.img; } else e.bg = renk; St.selObj = e.id; toast('Zemin rengi alındı', 'ok'); } catch (x) { toast('Renk okunamadı', 'err'); } }
       this.ciz(); Props.ciz(); if (p) Thumbs.yenile(p); };
     ov.addEventListener('pointerdown', damlaAl, true); ov.addEventListener('mousedown', damlaAl, true); ov.addEventListener('click', ev => { if (ov.dataset.damla) { ev.preventDefault(); ev.stopPropagation(); } }, true);
     const pdfN = ev => { const r = ov.getBoundingClientRect(); return View.v.convertToPdfPoint(ev.clientX - r.left, ev.clientY - r.top); };
@@ -919,10 +959,17 @@ const Overlay = {
     const kapak = { x: l.x - .5, y: l.y - l.size * .28, w: l.w + 1, h: l.size * 1.22, color: zm }; View.cizgidenUzak(kapak);   /* 1.3: tuval yeniden çizilmeden önce ölç */
     Hist.kaydet(); await Fonts.loadCss(l.font, l.b, l.i);
     const e = { id: uid(), t: 'replace', line: i, x: l.x, y: l.y, text: l.text, orig: l.text, font: l.font, b: l.b, i: l.i, size: l.size, color: yz, cover: kapak };
-    e.os = { font: e.font, b: e.b, i: e.i, size: e.size, color: yz.join(','), x: e.x, y: e.y, cz: zm.join(',') };
+    /* 1.9: satırda kalın ve normal parçalar karışıksa (ör. "İlçemiz **Ardıç Mahallesi**, …") kalınlık korunur */
+    try { const kal = q => /bold|black|heavy|semibold|demi|,b\b|-b\b/i.test(q.fn || ''); if (l.parts && l.parts.length > 1 && l.parts.some(kal) && !l.parts.every(kal)) {
+      const seg = []; let onc = null; for (const q of l.parts) { let t = q.s; if (onc) { const gp = q.x - (onc.x + onc.w); if (gp > l.size * .18 && !/\s$/.test(seg[seg.length - 1].s) && !/^\s/.test(t)) t = ' ' + t; }
+        const b = kal(q), son = seg[seg.length - 1]; if (son && son.b === b) son.s += t; else seg.push({ s: t, b }); onc = q; }
+      if (seg.length) seg[seg.length - 1].s = seg[seg.length - 1].s.replace(/\s+$/, ''); const metin = seg.map(x => x.s).join('');
+      if (metin.trim() === l.text.trim()) { e.parca = seg; e.b = false; await Fonts.loadCss(l.font, true, l.i); await Fonts.loadCss(l.font, false, l.i); } } } catch (x) { }
+    e.os = { font: e.font, b: e.b, i: e.i, size: e.size, color: yz.join(','), x: e.x, y: e.y, cz: zm.join(','), parca: e.parca ? JSON.stringify(e.parca) : null };
     p.edits.push(e); St.selObj = e.id; this.ciz(); Props.ciz(); this.odak(e);
+    ZeminDoku.uret(p, kapak).then(u => { if (!u || !p.edits.includes(e)) return; kapak.img = u; const o = $(`#ov [data-kapak="${e.id}"]`); if (o) Object.assign(o.style, { backgroundImage: `url(${u})`, backgroundSize: '100% 100%' }); });
   },
-  degismedi(e) { return e && e.t === 'replace' && e.os && e.text === e.orig && e.font === e.os.font && !!e.b === !!e.os.b && !!e.i === !!e.os.i && e.size === e.os.size && (e.color || []).join(',') === e.os.color && e.x === e.os.x && e.y === e.os.y && (e.opacity ?? 1) === 1 && !e.doku && !e.parca && (!e.cover || e.os.cz == null || e.cover.color.join(',') === e.os.cz); },
+  degismedi(e) { return e && e.t === 'replace' && e.os && e.text === e.orig && e.font === e.os.font && !!e.b === !!e.os.b && !!e.i === !!e.os.i && e.size === e.os.size && (e.color || []).join(',') === e.os.color && e.x === e.os.x && e.y === e.os.y && (e.opacity ?? 1) === 1 && !e.doku && (e.parca ? JSON.stringify(e.parca) === e.os.parca : !e.os.parca) && (!e.cover || e.os.cz == null || e.cover.color.join(',') === e.os.cz); },
   yeniNesne(dr) {
     const s = St.style, [x1, y1] = dr.a, [x2, y2] = dr.b, r = { x: Math.min(x1, x2), y: Math.min(y1, y2), w: Math.abs(x2 - x1), h: Math.abs(y2 - y1) };
     const id = dr.id || (dr.id = uid());
@@ -974,7 +1021,7 @@ const Props = {
       ${sec.doku ? `<div class="row"><label>Toz miktarı</label><input type="range" id="pToz" class="dol" min=".05" max=".45" step=".01" value="${sec.doku}"></div>` : ''}`, `${Math.round((sec.opacity ?? 1) * 100)}%${sec.doku ? ' · tozlu' : ''}`);
     if (metinSec) h += bol('zemin', 'Zemin', '▧', `
       <div class="row"><label>${sec.t === 'text' ? '<input type="checkbox" id="pZOn" title="Metnin arkasına zemin rengi koy" ' + (sec.bg ? 'checked' : '') + '> Zemin' : 'Örtü rengi'}</label><input type="color" id="pZemin" value="${rgb2hex((sec.cover && sec.cover.color) || sec.bg || [1, 1, 1])}"><button class="btn dol${St.damla ? ' on' : ''}" id="pDamla" aria-pressed="${!!St.damla}" title="Sayfada bir noktaya dokun: o noktanın rengi zemin olur">${St.damla ? 'Noktaya dokun…' : '💧 Sayfadan seç'}</button></div>
-      ${sec.t === 'replace' ? '<div class="hint">Eski yazıyı örten kutunun rengi. Tablo çizgilerine binmez.</div>' : ''}`);
+      ${sec.t === 'replace' ? `<div class="row"><label class="doku-sec"><input type="checkbox" id="pZDoku" ${sec.cover && sec.cover.img ? 'checked' : ''}> Orijinal kağıt dokusu</label></div><div class="hint">İşaretliyse eski yazı silinir, yerine kağıdın kendi tonu ve kumlaması gelir (düz renk leke olmaz). Renk seçerseniz düz renge döner. Tablo çizgilerine binmez.</div>` : ''}`);
     if (cizTool) h += bol('cizgi', 'Çizgi', '✎', `<div class="row"><label>Renk</label><input type="color" id="pStroke" value="${rgb2hex((sec ? sec.color : s.stroke) || [0, 0, 0])}"></div>
       <div class="row"><label>Kalınlık</label><input type="range" id="pWidth" class="dol" min=".5" max="12" step=".5" value="${sec ? sec.lw : s.width}"></div>
       <div class="row"><label>Saydamlık</label><input type="range" id="pOpac" class="dol" min=".1" max="1" step=".05" value="${(sec ? sec.opacity : s.opacity) ?? 1}"></div>
@@ -1009,8 +1056,10 @@ const Props = {
     on('pHl', 'input', e => { s.hl = hex2rgb(e.target.value); if (sec && sec.t === 'highlight') { sec.color = s.hl.slice(); Overlay.ciz(); } });
     on('pYog', 'input', e => { if (!sec) return; if (!e.target._k) { Hist.kaydet(); e.target._k = 1; } sec.opacity = +e.target.value; const dd = $('#pYogD', el); if (dd) dd.textContent = Math.round(sec.opacity * 100) + '%'; const o = $(`#ov [data-id="${sec.id}"]`); if (o) o.style.color = cssRgb(sec.color, sec.opacity); });
     on('pYog', 'change', () => { Overlay.ciz(); Thumbs.yenile(p); });
-    const zeminVer = rgbv => { if (!sec) return; Hist.kaydet(); if (sec.cover) sec.cover.color = rgbv.slice(); else { sec.bg = rgbv.slice(); const zo = $('#pZOn', el); if (zo) zo.checked = true; } Overlay.ciz(); Thumbs.yenile(p); };
+    const zeminVer = rgbv => { if (!sec) return; Hist.kaydet(); if (sec.cover) { sec.cover.color = rgbv.slice(); delete sec.cover.img; } else { sec.bg = rgbv.slice(); const zo = $('#pZOn', el); if (zo) zo.checked = true; } Overlay.ciz(); Thumbs.yenile(p); };
     on('pZemin', 'change', e => zeminVer(hex2rgb(e.target.value)));
+    on('pZDoku', 'change', async e => { if (!sec || !sec.cover) return; Hist.kaydet(); if (!e.target.checked) { delete sec.cover.img; Overlay.ciz(); Thumbs.yenile(p); return; }
+      toast('Kağıt dokusu hazırlanıyor…'); const u = await ZeminDoku.uret(p, sec.cover); if (u) { sec.cover.img = u; Overlay.ciz(); Thumbs.yenile(p); } else { e.target.checked = false; toast('Bu sayfada doku alınamadı', 'err'); } });
     on('pZOn', 'change', e => { if (!sec) return; Hist.kaydet(); sec.bg = e.target.checked ? hex2rgb($('#pZemin', el).value) : null; Overlay.ciz(); Thumbs.yenile(p); });
     on('pDamla', 'click', () => { St.damla = !St.damla; St.damlaHedef = St.damla ? sec.id : null; this.ciz(); if (St.damla) toast('Sayfada rengini almak istediğin noktaya dokun'); });
     $$('[data-ok]', el).forEach(b => { let t = null; const bas = () => { const [x, y] = b.dataset.ok.split(',').map(Number); Overlay.kaydir(x, y, 1, false); };
@@ -1135,7 +1184,8 @@ const Export = {
       else { pg = out.addPage([p.w, p.h]); pg.setRotation(degrees(R)); }
       const N = (x, y) => T ? this.nokta(T, x, y) : [x, y], S = T ? T.s : 1, rotT = T ? -T.R : 0;
       for (const e of p.edits.filter(z => !Overlay.degismedi(z))) {
-        if (e.cover) { const c = e.cover, a = N(c.x, c.y), b = N(c.x + c.w, c.y + c.h); pg.drawRectangle({ x: Math.min(a[0], b[0]), y: Math.min(a[1], b[1]), width: Math.abs(b[0] - a[0]), height: Math.abs(b[1] - a[1]), color: rgb(...c.color) }); }
+        if (e.cover) { const c = e.cover, a = N(c.x, c.y), b = N(c.x + c.w, c.y + c.h), kk = { x: Math.min(a[0], b[0]), y: Math.min(a[1], b[1]), width: Math.abs(b[0] - a[0]), height: Math.abs(b[1] - a[1]) };
+          if (c.img) { const im = await out.embedPng(ZeminDoku.bytes(c.img)); pg.drawImage(im, kk); } else pg.drawRectangle({ ...kk, color: rgb(...c.color) }); }
         const kutu = () => { const a = N(e.x, e.y), b = N(e.x + e.w, e.y + e.h); return { x: Math.min(a[0], b[0]), y: Math.min(a[1], b[1]), width: Math.abs(b[0] - a[0]), height: Math.abs(b[1] - a[1]) }; };
         switch (e.t) {
           case 'whiteout': pg.drawRectangle({ ...kutu(), color: rgb(...e.color) }); break;
@@ -1459,8 +1509,8 @@ const UI = {
     document.title = 'PDF Düzenleyici';
     $('#app').innerHTML = `
     <header class="top"><button class="btn ic ghost mob" id="bSide" title="Sayfalar" aria-label="Sayfalar">${ic('pages')}</button>
-      <div class="logo">${ic('logo', 24)}<span>PDF Düzenleyici<small class="surum-et" style="font:500 11px/1.2 system-ui,sans-serif;opacity:.65;margin-left:8px;letter-spacing:.02em;white-space:nowrap">sürüm 1.8 · 30.10.2026</small></span></div><div class="docname" id="docName"></div>
-      <button class="btn ic hb" id="bUndo" title="Geri al (Ctrl+Z)" aria-label="Geri al" disabled>${ic('undo')}<span class="hb-y">Geri</span></button><button class="btn ic hb" id="bRedo" title="Yinele (Ctrl+Y)" aria-label="Yinele" disabled>${ic('redo')}<span class="hb-y">İleri</span></button><button class="btn ic hb" id="bCizgi" title="Kesik çizgileri gizle / göster" aria-pressed="false"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="3 3"><rect x="4" y="5" width="16" height="14" rx="1"/></svg><span class="hb-y">Çizgiler</span></button><button class="btn ic hb" id="bBaski" title="Baskı önizleme — sayfanın yazıcıdan çıkacak hâli"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg><span class="hb-y">Baskı önizleme</span></button>
+      <div class="logo">${ic('logo', 24)}<span>PDF Düzenleyici<small class="surum-et" style="font:500 11px/1.2 system-ui,sans-serif;opacity:.65;margin-left:8px;letter-spacing:.02em;white-space:nowrap">sürüm 1.9 · 30.10.2026</small></span></div><div class="docname" id="docName"></div>
+      <button class="btn ic hb" id="bUndo" title="Geri al (Ctrl+Z)" aria-label="Geri al" disabled>${ic('undo')}<span class="hb-y">Geri</span></button><button class="btn ic hb" id="bRedo" title="Yinele (Ctrl+Y)" aria-label="Yinele" disabled>${ic('redo')}<span class="hb-y">İleri</span></button><button class="btn ic hb" id="bCizgi" title="Kesik çizgileri gizle / göster" aria-pressed="false"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="3 3"><rect x="4" y="5" width="16" height="14" rx="1"/></svg><span class="hb-y">Çizgiler</span></button><button class="btn ic hb" id="bBaski" title="Baskı önizleme — sayfanın yazıcıdan çıkacak hâli"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg><span class="hb-y">Önizleme</span></button>
       <button class="btn" id="bOpen" title="PDF veya görsel ekle">${ic('open')}<span class="lbl">Ekle</span></button>
       <button class="btn pri" id="bSave" disabled>${ic('save')}<span class="lbl">Kaydet</span></button>
       <button class="btn ic ghost mob" id="bProps" title="Araç ayarları" aria-label="Araç ayarları">${ic('props')}</button></header>

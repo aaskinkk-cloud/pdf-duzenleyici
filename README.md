@@ -1,5 +1,10 @@
 # PDF Düzenleyici
 
+## 1.9 (30.10.2026) — Orijinal kağıt dokusu, kalınlık korunur, yeni üst çubuk
+- Eski yazıyı örten kutu artık **düz renk değil, kağıdın kendisi**: bölge sayfadan yüksek çözünürlükte alınır, yazı silinip çevredeki kağıt tonu ve kumlamasıyla doldurulur (taranmış, renk tonu değişen belgelerde leke kalmaz). Zemin bölümünde "Orijinal kağıt dokusu" kutusu; renk seçilirse düz renge döner.
+- Satırda kalın ve normal parçalar karışıksa (ör. "İlçemiz **Ardıç Mahallesi**, …") düzenlemede kalınlık korunur.
+- Üst çubuk (Geri · İleri · Çizgiler · Önizleme · Ekle · Kaydet) alt araç çubuğuyla aynı görünümde: simge üstte, yazı altta; telefonda sığar.
+
 ## 1.8 (30.10.2026) — Kısmen kalın yazı
 - Düzenlenen satırda **yalnız seçilen kelime(ler) kalın** olur: kelimeyi seçip sağ paneldeki **K** ya da **Ctrl+B**. Seçim yoksa K tüm satırı kalın yapar (eskisi gibi). PDF'e, önizlemeye ve tozlu yazıya aynen yansır.
 - Açılış ekranındaki **Dosya seç** düğmesinde simge görünür, simge ve yazı ortalı.
