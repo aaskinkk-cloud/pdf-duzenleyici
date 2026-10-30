@@ -125,6 +125,7 @@ button{cursor:pointer;border:0;background:none}
 .bk-no{font:600 12px system-ui,sans-serif;color:#f3f4f6}
 .pk-bas{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px}
 .pk-arac{font-weight:700;font-size:14px;margin-bottom:4px}.pk-bas .hint{margin:0 0 8px}
+.dm-sec{display:grid;grid-template-columns:auto 1fr 1fr;gap:6px;align-items:center;margin:2px 0 8px}.dm-sec>span{font-size:12px;color:var(--ink2);font-weight:600}.dm-sec .btn{justify-content:center;height:32px}.dm-sec .btn.on{background:var(--acc);border-color:var(--acc);color:#fff}
 .hb-sat{display:grid;grid-template-columns:1fr 1fr;gap:6px}.hb-sat .btn{justify-content:center}
 .pk{border:1px solid var(--line);border-radius:12px;margin-bottom:8px;background:var(--panel);overflow:hidden}
 .pk-b{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:8px;width:100%;padding:9px 12px;cursor:pointer;background:var(--panel2);border-bottom:1px solid var(--line)}
@@ -387,7 +388,7 @@ const Fonts = {
 };
 
 /* ---------------- durum ve geçmiş ---------------- */
-const St = { cizgisiz: (() => { try { return !!localStorage.getItem('pe-cizgisiz'); } catch (e) { return false; } })(),
+const St = { duzenMod: (() => { try { return localStorage.getItem('pe-duzen-mod') === 'kelime' ? 'kelime' : 'satir'; } catch (e) { return 'satir'; } })(), cizgisiz: (() => { try { return !!localStorage.getItem('pe-cizgisiz'); } catch (e) { return false; } })(),
   docs: new Map(),      /* id -> {id,name,bytes,pdf(pdf.js),pl(pdf-lib Promise),password,size} */
   pages: [],            /* {uid, src:{doc,index}|{blank:true}|{image:true}, w,h (pt, döndürmesiz), rot0, rot, resize:null|{w,h}, edits:[] } */
   cur: 0, sel: new Set(), meta: { title: '', author: '', subject: '', keywords: '' },
@@ -1009,6 +1010,7 @@ const Props = {
     const aracAd = { select: 'Seç / taşı', edit: 'Metni düzenle', text: 'Metin ekle', pen: 'Kalem', rect: 'Dikdörtgen', ellipse: 'Elips', line: 'Çizgi', arrow: 'Ok', highlight: 'Vurgula', underline: 'Altını çiz', strike: 'Üstünü çiz', note: 'Not / yorum', whiteout: 'Beyaz kutu' }[t] || 'Araç';
     const metinSec = sec && (sec.t === 'text' || sec.t === 'replace');
     let h = `<div class="pk-bas"><div class="pk-arac">${aracAd}</div>${ipucu ? `<div class="hint">${ipucu}</div>` : ''}
+      ${(t === 'edit' || metinSec) ? `<div class="dm-sec" role="group" aria-label="Düzenleme biçimi"><span>Düzenleme</span><button class="btn${St.duzenMod === 'satir' ? ' on' : ''}" data-dm="satir" title="Satırın tamamı tek kutuda düzenlenir">▤ Satır</button><button class="btn${St.duzenMod === 'kelime' ? ' on' : ''}" data-dm="kelime" title="Yalnız dokunulan kelime (sürüklerseniz kelime aralığı) düzenlenir; diğerleri olduğu gibi kalır">▭ Kelime</button></div>` : ''}
       <div class="hb-sat"><button class="btn" id="pGeri" ${Hist.past.length ? '' : 'disabled'} title="Geri al (Ctrl+Z)">↶ Geri al</button><button class="btn" id="pIleri" ${Hist.future.length ? '' : 'disabled'} title="İleri al (Ctrl+Y)">İleri al ↷</button></div></div>`;
     if (yaziTool) h += bol('yazi', 'Yazı', 'A', `
       ${stiller.length ? `<div class="row"><select id="pStil" class="tam"><option value="">Belgedeki yazı stilleri…</option>${stiller.map((x, i) => `<option value="${i}">${i === 0 ? '★ ' : ''}${Fonts.AD[x.font]} ${x.size} pt${x.b ? ' kalın' : ''}${x.i ? ' italik' : ''} — ${esc(x.ornek)}</option>`).join('')}</select></div>` : ''}
@@ -1065,6 +1067,7 @@ const Props = {
     $$('[data-ok]', el).forEach(b => { let t = null; const bas = () => { const [x, y] = b.dataset.ok.split(',').map(Number); Overlay.kaydir(x, y, 1, false); };
       b.addEventListener('pointerdown', ev => { ev.preventDefault(); bas(); t = setInterval(bas, 120); }); ['pointerup', 'pointerleave', 'pointercancel'].forEach(o => b.addEventListener(o, () => clearInterval(t))); });
     on('pCizgi', 'change', e => Overlay.cizgiDegis(e.target.checked));
+    $$('[data-dm]', el).forEach(b => b.onclick = () => { St.duzenMod = b.dataset.dm; try { localStorage.setItem('pe-duzen-mod', St.duzenMod); } catch (x) { } this.ciz(); toast(St.duzenMod === 'kelime' ? 'Kelime düzenleme: dokunduğunuz kelime (sürüklerseniz aralık) düzenlenir' : 'Satır düzenleme: satırın tamamı düzenlenir'); });
     on('pGeri', 'click', () => Hist.geri(-1)); on('pIleri', 'click', () => Hist.geri(1));
     on('pDoku', 'change', e => { if (!sec) return; Hist.kaydet(); sec.doku = e.target.checked ? (sec.dokuV || .12) : 0; Overlay.ciz(); Thumbs.yenile(p); this.ciz(); });
     on('pToz', 'input', e => { if (!sec) return; if (!e.target._k) { Hist.kaydet(); e.target._k = 1; } sec.doku = sec.dokuV = +e.target.value; const o = $(`#ov [data-id="${sec.id}"]`); if (o) Doku.ekran(o, sec, View.v); });
@@ -1509,7 +1512,7 @@ const UI = {
     document.title = 'PDF Düzenleyici';
     $('#app').innerHTML = `
     <header class="top"><button class="btn ic ghost mob" id="bSide" title="Sayfalar" aria-label="Sayfalar">${ic('pages')}</button>
-      <div class="logo">${ic('logo', 24)}<span>PDF Düzenleyici<small class="surum-et" style="font:500 11px/1.2 system-ui,sans-serif;opacity:.65;margin-left:8px;letter-spacing:.02em;white-space:nowrap">sürüm 2.1 · 30.10.2026</small></span></div><div class="docname" id="docName"></div>
+      <div class="logo">${ic('logo', 24)}<span>PDF Düzenleyici<small class="surum-et" style="font:500 11px/1.2 system-ui,sans-serif;opacity:.65;margin-left:8px;letter-spacing:.02em;white-space:nowrap">sürüm 2.2 · 30.10.2026</small></span></div><div class="docname" id="docName"></div>
       <button class="btn ic hb" id="bUndo" title="Geri al (Ctrl+Z)" aria-label="Geri al" disabled>${ic('undo')}<span class="hb-y">Geri</span></button><button class="btn ic hb" id="bRedo" title="Yinele (Ctrl+Y)" aria-label="Yinele" disabled>${ic('redo')}<span class="hb-y">İleri</span></button><button class="btn ic hb" id="bCizgi" title="Kesik çizgileri gizle / göster" aria-pressed="false"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="3 3"><rect x="4" y="5" width="16" height="14" rx="1"/></svg><span class="hb-y">Çizgiler</span></button><button class="btn ic hb" id="bBaski" title="Baskı önizleme — sayfanın yazıcıdan çıkacak hâli"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg><span class="hb-y">Önizleme</span></button>
       <button class="btn" id="bOpen" title="PDF veya görsel ekle">${ic('open')}<span class="lbl">Ekle</span></button>
       <button class="btn pri" id="bSave" disabled>${ic('save')}<span class="lbl">Kaydet</span></button>
@@ -1673,8 +1676,8 @@ const Esles = {
   const eski = Overlay.satirDuzenle.bind(Overlay);
   Overlay.satirDuzenle = async function (lb) {
     const p = St.pages[St.cur]; if (!p || !View.v) return; const i = +lb.dataset.line, l = View.lines[i]; if (!l) return;
-    if (this._surukle && !arguments[1]) { /* sürükleme yolu zaten çağırdı; ardından gelen tıklamayı yok say */ } const ocr = await Esles.ocrMu(p);
-    if (!ocr) {   /* normal PDF: satır düzenleme; yazı tipi adı belirsizse görünen harflerden bul */
+    const ocr = await Esles.ocrMu(p), kelimeKip = St.duzenMod === 'kelime';
+    if (!ocr && !kelimeKip) {   /* normal PDF: satır düzenleme; yazı tipi adı belirsizse görünen harflerden bul */
       await eski(lb); if (AD_BELLI.test(l.fn || '')) return; const e = p.edits[p.edits.length - 1]; if (!e || e.line !== i) return;
       try { const B = await Esles.bolge(p, { x: l.x - 1, y: l.y - l.size * .35, w: l.w + 2, h: l.size * 1.4 }), r = await Esles.bul(B, l.text);
         if (r) { e.font = r.font; if (!e.parca) e.b = r.b; e.os.font = e.font; e.os.b = e.b; await Fonts.loadCss(e.font, e.b, e.i); this.ciz(); Props.ciz(); this.odak(e); toast(`Yazı tipi görünen harflerden bulundu: ${Fonts.AD[r.font]}${r.b ? ' kalın' : ''}`); } } catch (x) { }
@@ -1701,14 +1704,17 @@ const Esles = {
     const t1 = son ? pxOf(son.x) : (seg[0].xa + seg[0].xb) / 2, t2 = Overlay._sonTik != null ? pxOf(Overlay._sonTik) : t1;
     const yak = px => { let en = 0, ed = 1e9; seg.forEach((s, j) => { const dd = px < s.xa ? s.xa - px : px > s.xb ? px - s.xb : 0; if (dd < ed) { ed = dd; en = j; } }); return en; };
     /* 2.1: taranmış sayfada da görünen satırın TAMAMI düzenlenir (kelime kelime değil) */
-    let a = 0, b = seg.length - 1; void yak; void t1; void t2;
-    const anahtar = 'g' + Math.round(B.pdf(0, B.H)[1]) + ':' + Math.round(B.pdf(seg[0].xa, 0)[0]); if (p.edits.some(e => e.line === anahtar)) { Busy.kapat(); return; }
+    let a = 0, b = seg.length - 1;
+    if (kelimeKip) { a = yak(Math.min(t1, t2)); b = yak(Math.max(t1, t2)); }
+    const satKey = 'g' + Math.round(B.pdf(0, B.H)[1]) + ':', anahtar = satKey + (kelimeKip ? a + '-' + b : 'satir');
+    if (kelimeKip && p.edits.some(e => e.line === satKey + 'satir')) { Busy.kapat(); toast('Bu satır zaten bütün olarak düzenleniyor'); return; } if (p.edits.some(e => e.line === anahtar)) { Busy.kapat(); return; }
     /* OCR metnini kelimelere dağıt: parça konumlarıyla, olmazsa sırayla */
     /* aynı görsel satırdaki tüm OCR parçaları (OCR kelimeleri ayrı satır sayılmış olabilir) konumlarına göre kelimelere dağıtılır */
     const havuz = [...new Set(View.lines.filter(q => Math.abs(q.y - l.y) < l.size * .5).flatMap(q => q.parts || []))].filter((q, k, a) => a.findIndex(z => z.x === q.x && z.s === q.s) === k);
     const xa = B.pdf(seg[a].xa, 0)[0], xb = B.pdf(seg[b].xb, 0)[0];
     let metin = havuz.filter(q => { const c = q.x + q.w / 2; return c >= xa - 1 && c <= xb + 1; }).sort((p1, p2) => p1.x - p2.x).map(q => q.s).join(' ').replace(/\s+/g, ' ').trim();
-    if (!metin) { const tum = View.lines.filter(q => Math.abs(q.y - l.y) < l.size * .5).map(q => q.text).join(' ').split(/\s+/).filter(Boolean); if (tum.length === seg.length) metin = tum.slice(a, b + 1).join(' '); }
+    { const tum = View.lines.filter(q => Math.abs(q.y - l.y) < l.size * .5).sort((p1, p2) => p1.x - p2.x).map(q => q.text).join(' ').split(/\s+/).filter(Boolean);
+      if ((!metin || !ocr) && tum.length === seg.length) metin = tum.slice(a, b + 1).join(' '); else if (!metin && !kelimeKip) metin = tum.join(' '); }
     let r = null; try { r = await Esles.bul(B, metin, seg[a].xa, seg[b].xb); } catch (x) { }
     /* kelime kalınlıkları: OCR kelime sayısı görünen kelime sayısıyla aynıysa kalın/normal parçalar korunur */
     let parca = null; try { const kel = metin.split(/\s+/).filter(Boolean); if (r && r.T && r.T.Bd.oz && kel.length === seg.length) {
@@ -1718,13 +1724,17 @@ const Esles = {
     const ka = Esles.kutu(B.m, B.W, B.H, seg[a].xa, seg[b].xb), lkk = Esles.kutu(B.m, B.W, B.H), pad = 3 * S / 4; if (lkk) { ka.y0 = Math.min(ka.y0, lkk.y0); ka.y1 = Math.max(ka.y1, lkk.y1); }   /* örtü satırın tam yüksekliğinde (ç, ş, İ izleri kalmasın) */
     const p1 = B.pdf(Math.max(0, ka.x0 - pad), Math.max(0, ka.y0 - pad)), p2 = B.pdf(Math.min(B.W, ka.x1 + pad), Math.min(B.H, ka.y1 + pad));
     const kapak = { x: Math.min(p1[0], p2[0]), y: Math.min(p1[1], p2[1]), w: Math.abs(p2[0] - p1[0]), h: Math.abs(p2[1] - p1[1]), color: B.zemin };
-    const font = r ? r.font : 'tinos', bb = r ? r.b : false, size = r && r.size >= 4 ? r.size : l.size, x = r ? r.x : B.pdf(ka.x0, 0)[0], y = r ? r.y : B.pdf(0, ka.y1)[1];
+    let font = r ? r.font : 'tinos', bb = r ? r.b : false, size = r && r.size >= 4 ? r.size : l.size, x = r ? r.x : B.pdf(ka.x0, 0)[0], y = r ? r.y : B.pdf(0, ka.y1)[1];
+    if (!ocr) {   /* normal PDF'te yazı tipi adı, punto ve taban çizgisi PDF'in kendisinden (kesin); yalnız ad belirsizse görünen harfler */
+      const ilk = havuz.filter(q => { const c = q.x + q.w / 2; return c >= xa - 1 && c <= xb + 1; }).sort((p1, p2) => p1.x - p2.x), fnA = (ilk[0] && ilk[0].fn) || l.fn || '';
+      if (AD_BELLI.test(fnA)) { font = Fonts.fromName(fnA); bb = /bold|black|heavy|semibold|demi|,b\b|-b\b/i.test(fnA); }
+      size = l.size; y = l.y; if (ilk[0] && ilk[0].x >= xa - 1 && ilk[0].x + ilk[0].w <= xb + 1) x = ilk[0].x; }
     Hist.kaydet(); await Fonts.loadCss(font, bb, false);
     const e = { id: uid(), t: 'replace', line: anahtar, x, y, text: metin, orig: metin, font, b: parca ? false : bb, i: false, size, color: B.yazi, cover: kapak, ocr: true };
     if (parca) { e.parca = parca; await Fonts.loadCss(font, true, false); await Fonts.loadCss(font, false, false); }
     e.os = { font, b: e.b, i: false, size, color: B.yazi.join(','), x, y, cz: B.zemin.join(','), parca: parca ? JSON.stringify(parca) : null };
     p.edits.push(e); St.selObj = e.id; this.ciz(); Props.ciz(); this.odak(e); this._surukle = false;
-    toast(`Taranmış belge · ${Fonts.AD[font]}${parca ? ' (kalın kısımlar korundu)' : bb ? ' kalın' : ''} ${size} pt — görünen harflerden. OCR metnindeki hataları düzeltin.`, 'ok', 5000);
+    toast(`${kelimeKip ? 'Kelime düzenleme' : 'Taranmış belge'} · ${Fonts.AD[font]}${parca ? ' (kalın kısımlar korundu)' : bb ? ' kalın' : ''} ${size} pt — görünen harflerden. OCR metnindeki hataları düzeltin.`, 'ok', 5000);
     ZeminDoku.uret(p, kapak).then(u => { if (!u || !p.edits.includes(e)) return; kapak.img = u; const o = $(`#ov [data-kapak="${e.id}"]`); if (o) Object.assign(o.style, { backgroundImage: `url(${u})`, backgroundSize: '100% 100%' }); });
   };
   /* sürükleyerek kelime aralığı: bırakılan nokta */

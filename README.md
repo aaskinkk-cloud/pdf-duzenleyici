@@ -1,5 +1,9 @@
 # PDF Düzenleyici
 
+## 2.2 (30.10.2026) — Satır / Kelime düzenleme seçimi
+- Sağ panelin üstünde (Metni düzenle aracı) **Düzenleme: ▤ Satır · ▭ Kelime** düğmeleri; seçim hatırlanır.
+  **Satır:** satırın tamamı tek kutuda. **Kelime:** yalnız dokunulan kelime (sürüklenirse kelime aralığı) düzenlenir, diğerleri olduğu gibi kalır — normal ve taranmış PDF'te. Normal PDF'te yazı tipi/punto/taban çizgisi PDF'in kendisinden; taranmışta görünen harflerden. Yeni yazı yandaki kelimeye taşarsa uyarır.
+
 ## 2.1 (30.10.2026) — Taranmış belgede yine satırın tamamı
 - Taranmış (OCR katmanlı) sayfada da tıklanan **görünen satırın tamamı** düzenlenir (kelime kelime değil). Yazı tipi/punto/kalınlık görünen harflerden bulunmaya devam eder; OCR kelime sayısı görünen kelimelerle aynıysa kalın kısımlar korunur. Satır metni gizli OCR katmanından gelir, hatalı harfler düzeltilir. Aynı görsel satıra ikinci tıklama yeni düzenleme açmaz.
 
