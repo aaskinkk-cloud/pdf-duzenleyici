@@ -146,7 +146,7 @@ button{cursor:pointer;border:0;background:none}
 .drop.on{border-color:var(--acc);background:var(--acc2)}
 .drop h1{font-size:21px;margin:10px 0 6px}
 .drop p{color:var(--ink2);margin:0 0 16px}
-.drop svg{width:52px;height:52px;color:var(--acc)}
+.drop svg{width:52px;height:52px;color:var(--acc)}.drop .btn svg{width:18px;height:18px;color:inherit}#bOpen2{justify-content:center;gap:8px}
 .feat{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:18px;text-align:left}
 .feat div{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:12.5px;color:var(--ink2)}
 .feat b{display:block;color:var(--ink);font-size:13px}
@@ -542,7 +542,9 @@ const Paint = {
       case 'text': case 'replace': { if (!e.text) break; const [x, y] = P(e.x, e.y), fs = e.size * sc; c.font = `${e.i ? 'italic ' : ''}${e.b ? '700 ' : '400 '}${fs}px ${Fonts.stack(e.font)}`;
         c.translate(x, y);
         if (e.t === 'text' && e.bg) { const sat = String(e.text).split('\n'), gw = Math.max(...sat.map(q => c.measureText(q).width)); c.save(); c.rotate(v.rotation * Math.PI / 180); c.fillStyle = cssRgb(e.bg); c.fillRect(-fs * .1, -fs * .88, gw + fs * .2, sat.length * fs * 1.2); c.restore(); }
-        c.fillStyle = cssRgb(e.color, e.opacity ?? 1); c.rotate(v.rotation * Math.PI / 180); String(e.text).split('\n').forEach((s, i) => c.fillText(s, 0, i * fs * 1.2)); break; }
+        c.fillStyle = cssRgb(e.color, e.opacity ?? 1); c.rotate(v.rotation * Math.PI / 180);
+        if (e.parca && e.parca.length) { Parca.satirlar(e).forEach((sat, i) => { let dx = 0; sat.forEach(q => { c.font = `${e.i ? 'italic ' : ''}${q.b ? '700 ' : '400 '}${fs}px ${Fonts.stack(e.font)}`; c.fillText(q.s, dx, i * fs * 1.2); dx += c.measureText(q.s).width; }); }); break; }
+        String(e.text).split('\n').forEach((s, i) => c.fillText(s, 0, i * fs * 1.2)); break; }
       case 'image': { if (e.bmp) c.drawImage(e.bmp, ...kutu(e)); break; }
       case 'note': { const [x, y] = P(e.x, e.y + 18); c.fillStyle = '#f6c945'; c.fillRect(x, y, 18 * sc, 18 * sc); c.fillStyle = '#5a4400'; c.font = `700 ${12 * sc}px sans-serif`; c.fillText('✎', x + 4 * sc, y + 14 * sc); break; }
     }
@@ -725,6 +727,23 @@ const View = {
   sigdir(m) { St.fitMode = m; this.ciz(); }
 };
 
+/* ---------------- 1.8: satır içinde kısmen kalın yazı ----------------
+   e.parca = [{s, b}] (s içinde '\n' olabilir); yalnız karışık kalınlık varsa tutulur, yoksa e.b geçerlidir. */
+const Parca = {
+  satirlar(e) { const src = e.parca && e.parca.length ? e.parca : [{ s: String(e.text || ''), b: !!e.b }], out = [[]];
+    src.forEach(p => { String(p.s).split('\n').forEach((q, i) => { if (i) out.push([]); if (q) out[out.length - 1].push({ s: q, b: !!p.b }); }); }); return out; },
+  /* düzenlenebilir kutudan oku: metin düğümlerinin gerçek kalınlığına bakar */
+  oku(d, e) { const seg = []; let ilk = true;
+    const ekle = (t, b) => { if (!t) return; const son = seg[seg.length - 1]; if (son && son.b === b) son.s += t; else seg.push({ s: t, b }); };
+    const gez = n => { for (const c of n.childNodes) { if (c.nodeType === 3) { const w = parseInt(getComputedStyle(c.parentElement).fontWeight, 10) || 400; ekle(c.data, w >= 600); ilk = false; }
+        else if (c.nodeName === 'BR') ekle('\n', seg.length ? seg[seg.length - 1].b : !!e.b);
+        else if (c.nodeType === 1) { if ((c.nodeName === 'DIV' || c.nodeName === 'P') && !ilk) ekle('\n', seg.length ? seg[seg.length - 1].b : !!e.b); gez(c); } } };
+    gez(d); while (seg.length && /^\n*$/.test(seg[seg.length - 1].s) && seg.length > 1) seg.pop(); if (seg.length) seg[seg.length - 1].s = seg[seg.length - 1].s.replace(/\n$/, '');
+    const kal = seg.filter(x => x.s.replace(/\n/g, '')); if (!kal.length) { e.parca = null; return; }
+    if (kal.every(x => x.b === kal[0].b)) { e.parca = null; e.b = kal[0].b; } else e.parca = seg; },
+  html(e) { return e.parca.map(p => { const t = esc(p.s).replace(/\n/g, '<br>'); return p.b ? `<b style="font-weight:700">${t}</b>` : `<span style="font-weight:400">${t}</span>`; }).join(''); }
+};
+
 /* ---------------- 1.3: taranmış (tozlu) yazı ----------------
    Siyah yazının üzerinde ince beyaz tozlar: ekranda desenli yazı, PDF'te yazı yüksek çözünürlüklü görsel olarak gömülür. */
 const Doku = {
@@ -735,12 +754,13 @@ const Doku = {
     g.putImageData(im, 0, 0); return c.toDataURL(); },
   ekran(d, e, v) { const u = this.desen(e), boy = 14 * v.scale; Object.assign(d.style, { backgroundImage: `url(${u})`, backgroundSize: `${boy}px ${boy}px`, webkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent', caretColor: cssRgb(e.color), filter: 'blur(.25px)' }); },
   /* PDF için: yazıyı tozlu PNG'ye çevir; kutu PDF birimlerinde */
-  async png(e) { await Fonts.loadCss(e.font, e.b, e.i); const K = 10, pad = e.size * .25, sat = String(e.text).split('\n');
-    const c = document.createElement('canvas'), g = c.getContext('2d'), fnt = s => `${e.i ? 'italic ' : ''}${e.b ? '700 ' : '400 '}${s}px ${Fonts.stack(e.font)}`;
-    g.font = fnt(e.size * K); const gw = Math.max(1, ...sat.map(q => g.measureText(q).width)) / K;
+  async png(e) { await Fonts.loadCss(e.font, e.b, e.i); if (e.parca) { await Fonts.loadCss(e.font, true, e.i); await Fonts.loadCss(e.font, false, e.i); }
+    const K = 10, pad = e.size * .25, sat = Parca.satirlar(e);
+    const c = document.createElement('canvas'), g = c.getContext('2d'), fnt = (s, b) => `${e.i ? 'italic ' : ''}${b ? '700 ' : '400 '}${s}px ${Fonts.stack(e.font)}`;
+    const gen = l => l.reduce((t, q) => { g.font = fnt(e.size * K, q.b); return t + g.measureText(q.s).width; }, 0); const gw = Math.max(1, ...sat.map(gen)) / K;
     const W = gw + pad * 2, H = sat.length * e.size * 1.2 + pad * 2; c.width = Math.ceil(W * K); c.height = Math.ceil(H * K);
-    g.font = fnt(e.size * K); g.fillStyle = cssRgb(e.color, e.opacity ?? 1); g.filter = 'blur(' + (K * .045).toFixed(2) + 'px)';
-    sat.forEach((q, i) => g.fillText(q, pad * K, (pad + e.size * .88 + i * e.size * 1.2) * K)); g.filter = 'none';
+    g.fillStyle = cssRgb(e.color, e.opacity ?? 1); g.filter = 'blur(' + (K * .045).toFixed(2) + 'px)';
+    sat.forEach((l, i) => { let dx = 0; l.forEach(q => { g.font = fnt(e.size * K, q.b); g.fillText(q.s, pad * K + dx, (pad + e.size * .88 + i * e.size * 1.2) * K); dx += g.measureText(q.s).width; }); }); g.filter = 'none';
     const im = g.getImageData(0, 0, c.width, c.height), d = im.data, R = this.rnd(e.id), oran = e.doku || .12, w = c.width;
     for (let y = 0; y < c.height; y += 2) for (let x = 0; x < w; x += 2) { if (R() >= oran) continue; const k = R() < .3 ? 3 : 2, t = .6 + R() * .4;
       for (let yy = y; yy < Math.min(y + k, c.height); yy++) for (let xx = x; xx < Math.min(x + k, w); xx++) { const i = (yy * w + xx) * 4; d[i + 3] = Math.round(d[i + 3] * (1 - t)); } }
@@ -769,11 +789,11 @@ const Overlay = {
         if (e.cover) { const k = kutu(e.cover); const d = document.createElement('div'); d.className = 'obj'; Object.assign(d.style, { left: k.l + 'px', top: k.t + 'px', width: k.w + 'px', height: k.h + 'px', background: cssRgb(e.cover.color), pointerEvents: 'none' }); ov.appendChild(d); }
         const [x, y] = v.convertToViewportPoint(e.x, e.y), fs = e.size * v.scale; const d = document.createElement('div'); d.className = 'obj txt' + (secili ? ' sel' : ''); d.dataset.id = e.id; d.contentEditable = St.tool === 'select' ? 'false' : 'true'; d.spellcheck = false;
         Object.assign(d.style, { left: x + 'px', top: (y - fs * .88) + 'px', fontFamily: Fonts.stack(e.font), fontSize: fs + 'px', lineHeight: (fs * 1.2) + 'px', fontWeight: e.b ? 700 : 400, fontStyle: e.i ? 'italic' : 'normal', color: cssRgb(e.color, e.opacity ?? 1), background: (e.t === 'text' && e.bg) ? cssRgb(e.bg) : '', transformOrigin: `0 ${fs * .88}px`, transform: v.rotation ? `rotate(${v.rotation}deg)` : '' });
-        d.textContent = e.text; ov.appendChild(d); Fonts.loadCss(e.font, e.b, e.i);
+        if (e.parca && e.parca.length) { d.innerHTML = Parca.html(e); Fonts.loadCss(e.font, true, e.i); Fonts.loadCss(e.font, false, e.i); } else d.textContent = e.text; ov.appendChild(d); Fonts.loadCss(e.font, e.b, e.i);
         if (e.doku) Doku.ekran(d, e, v);
         if (secili && !v.rotation) this.tutamak(d, e, v, p);
         d.addEventListener('focus', () => { St.selObj = e.id; Props.ciz(); d._once = d._once || (Hist.kaydet(), true); });
-        d.addEventListener('input', () => { e.text = d.innerText.replace(/\n$/, ''); });
+        d.addEventListener('input', ev => { e.text = d.innerText.replace(/\n$/, ''); if (e.parca || (ev && ev.inputType === 'formatBold')) { Parca.oku(d, e); if (ev && ev.inputType === 'formatBold') { Fonts.loadCss(e.font, true, e.i); Fonts.loadCss(e.font, false, e.i); Props.ciz(); } } });
         d.addEventListener('blur', () => { d._once = false; e.text = d.innerText.replace(/\n$/, ''); if (this.degismedi(e)) setTimeout(() => { const a = document.activeElement; if (St.selObj === e.id && a && (a.closest('#props,.props,#panel,aside') || a === d)) return; if (this.degismedi(e)) { p.edits = p.edits.filter(x => x !== e); if (St.selObj === e.id) St.selObj = null; this.ciz(); Props.ciz(); } }, 150); if (e.t === 'text' && !e.text.trim()) { p.edits = p.edits.filter(x => x !== e); this.ciz(); } Thumbs.yenile(p); });
       } else if (e.t === 'image') {
         const k = kutu(e); const d = document.createElement('div'); d.className = 'obj' + (secili ? ' sel' : ''); d.dataset.id = e.id; Object.assign(d.style, { left: k.l + 'px', top: k.t + 'px', width: k.w + 'px', height: k.h + 'px' });
@@ -902,7 +922,7 @@ const Overlay = {
     e.os = { font: e.font, b: e.b, i: e.i, size: e.size, color: yz.join(','), x: e.x, y: e.y, cz: zm.join(',') };
     p.edits.push(e); St.selObj = e.id; this.ciz(); Props.ciz(); this.odak(e);
   },
-  degismedi(e) { return e && e.t === 'replace' && e.os && e.text === e.orig && e.font === e.os.font && !!e.b === !!e.os.b && !!e.i === !!e.os.i && e.size === e.os.size && (e.color || []).join(',') === e.os.color && e.x === e.os.x && e.y === e.os.y && (e.opacity ?? 1) === 1 && !e.doku && (!e.cover || e.os.cz == null || e.cover.color.join(',') === e.os.cz); },
+  degismedi(e) { return e && e.t === 'replace' && e.os && e.text === e.orig && e.font === e.os.font && !!e.b === !!e.os.b && !!e.i === !!e.os.i && e.size === e.os.size && (e.color || []).join(',') === e.os.color && e.x === e.os.x && e.y === e.os.y && (e.opacity ?? 1) === 1 && !e.doku && !e.parca && (!e.cover || e.os.cz == null || e.cover.color.join(',') === e.os.cz); },
   yeniNesne(dr) {
     const s = St.style, [x1, y1] = dr.a, [x2, y2] = dr.b, r = { x: Math.min(x1, x2), y: Math.min(y1, y2), w: Math.abs(x2 - x1), h: Math.abs(y2 - y1) };
     const id = dr.id || (dr.id = uid());
@@ -962,7 +982,7 @@ const Props = {
     if (t === 'highlight' || (sec && sec.t === 'highlight')) h += bol('vurgu', 'Vurgu', '▬', `<div class="row"><label>Vurgu rengi</label><input type="color" id="pHl" value="${rgb2hex(sec ? sec.color : s.hl)}"></div>`);
     const cizgiKutu = `<div class="row"><label class="doku-sec"><input type="checkbox" id="pCizgi" ${St.cizgisiz ? 'checked' : ''}> Kesik çizgileri gizle</label></div>`;
     if (sec && sec.t !== 'note') h += bol('konum', 'Konum', '✥', `<div class="ok-sat"><button class="btn ic" data-ok="-1,0" title="Sola (←)">◀</button><button class="btn ic" data-ok="0,-1" title="Yukarı (↑)">▲</button><button class="btn ic" data-ok="0,1" title="Aşağı (↓)">▼</button><button class="btn ic" data-ok="1,0" title="Sağa (→)">▶</button></div>
-      <div class="hint">Yön tuşları: 0,5 pt · Shift: 5 pt${metinSec ? ' · yazarken Alt+yön' : ''}${metinSec ? '<br>Tutamaklar: köşeler büyütür/küçültür, ✥ sürükleyerek taşır.' : ''}</div>${cizgiKutu}`);
+      <div class="hint">Yön tuşları: 0,5 pt · Shift: 5 pt${metinSec ? ' · yazarken Alt+yön' : ''}${metinSec ? '<br>Tutamaklar: köşeler büyütür/küçültür, ✥ sürükleyerek taşır.<br>Kısmen kalın: kelimeyi seçip <b>K</b> ya da Ctrl+B.' : ''}</div>${cizgiKutu}`);
     else h += bol('ekran', 'Ekran', '⬚', cizgiKutu);
     if (sec) h += bol('nesne', 'Seçili nesne', '●', `<div class="row"><button class="btn dol" id="pDel">${ic('trash', 16)}Sil</button>${sec.t === 'note' ? `<button class="btn dol" id="pNote">${ic('note', 16)}Notu düzenle</button>` : ''}</div>`);
     const notlar = p.edits.filter(e => e.t === 'note');
@@ -975,7 +995,10 @@ const Props = {
     on('pStil', 'change', e => { const st = stiller[+e.target.value]; if (!st) return; s.font = st.font; s.b = st.b; s.i = st.i; s.size = st.size; if (sec && sec.font) { Hist.kaydet(); Object.assign(sec, { font: st.font, b: st.b, i: st.i, size: st.size }); Fonts.loadCss(st.font, st.b, st.i).then(() => Overlay.ciz()); } this.ciz(); });
     on('pFont', 'change', e => { s.font = e.target.value; if (sec && sec.font) { Hist.kaydet(); sec.font = s.font; Fonts.loadCss(sec.font, sec.b, sec.i).then(() => Overlay.ciz()); } });
     on('pSize', 'input', e => { const v = parseFloat(e.target.value); if (!(v >= 4 && v <= 144)) return; s.size = v; if (sec && sec.size) { sec.size = v; Overlay.ciz(); } });
-    on('pB', 'click', () => { if (sec && sec.font) { Hist.kaydet(); sec.b = !sec.b; s.b = sec.b; Fonts.loadCss(sec.font, sec.b, sec.i).then(() => Overlay.ciz()); } else s.b = !s.b; this.ciz(); });
+    const pBd = $('#pB', el); if (pBd) pBd.addEventListener('mousedown', ev => ev.preventDefault());   /* 1.8: seçim kaybolmasın */
+    on('pB', 'click', () => { const dEl = sec && $(`#ov [data-id="${sec.id}"]`), sl = getSelection();
+      if (dEl && sl && sl.rangeCount && !sl.isCollapsed && dEl.contains(sl.anchorNode) && dEl.contains(sl.focusNode)) { Hist.kaydet(); document.execCommand('bold'); return; }
+      if (sec && sec.font) { sec.parca = null; Hist.kaydet(); sec.b = !sec.b; s.b = sec.b; Fonts.loadCss(sec.font, sec.b, sec.i).then(() => Overlay.ciz()); } else s.b = !s.b; this.ciz(); });
     on('pI', 'click', () => { if (sec && sec.font) { Hist.kaydet(); sec.i = !sec.i; s.i = sec.i; Fonts.loadCss(sec.font, sec.b, sec.i).then(() => Overlay.ciz()); } else s.i = !s.i; this.ciz(); });
     on('pColor', 'input', e => { s.color = hex2rgb(e.target.value); if (sec && sec.font) { sec.color = s.color.slice(); Overlay.ciz(); } });
     on('pStroke', 'input', e => { s.stroke = hex2rgb(e.target.value); if (sec && sec.lw != null) { sec.color = s.stroke.slice(); Overlay.ciz(); } });
@@ -1125,9 +1148,11 @@ const Export = {
           case 'ink': { const q = e.pts.map(z => N(z[0], z[1])); if (q.length < 2) break; const path = 'M ' + q.map(z => `${z[0].toFixed(2)} ${(-z[1]).toFixed(2)}`).join(' L ');
             pg.drawSvgPath(path, { x: 0, y: 0, borderColor: rgb(...e.color), borderWidth: e.lw * S, borderOpacity: e.opacity ?? 1, borderLineCap: L.LineCapStyle ? L.LineCapStyle.Round : undefined }); break; }
           case 'text': case 'replace': { if (!e.text || !e.text.trim()) break; const f = await font(e.font, e.b, e.i); const lines = String(e.text).split('\n');
-            if (e.t === 'text' && e.bg) { const gw = Math.max(...lines.map(q => { try { return f.widthOfTextAtSize(q, e.size); } catch (x) { return 0; } })), a = N(e.x - e.size * .1, e.y - (lines.length - 1) * e.size * 1.2 - e.size * .32), b = N(e.x + gw + e.size * .1, e.y + e.size * .88);
+            if (e.t === 'text' && e.bg) { let gw = Math.max(...lines.map(q => { try { return f.widthOfTextAtSize(q, e.size); } catch (x) { return 0; } })); if (e.parca) { gw = 0; for (const sat of Parca.satirlar(e)) { let w = 0; for (const q of sat) { try { w += (await font(e.font, q.b, e.i)).widthOfTextAtSize(q.s, e.size); } catch (x) { } } gw = Math.max(gw, w); } } const _gw = gw, a = N(e.x - e.size * .1, e.y - (lines.length - 1) * e.size * 1.2 - e.size * .32), b = N(e.x + _gw + e.size * .1, e.y + e.size * .88);
               pg.drawRectangle({ x: Math.min(a[0], b[0]), y: Math.min(a[1], b[1]), width: Math.abs(b[0] - a[0]), height: Math.abs(b[1] - a[1]), color: rgb(...e.bg) }); }
             if (e.doku) { const q = await Doku.png(e), im = await out.embedPng(q.bytes), a = N(q.x, q.ust - q.h), b = N(q.x + q.w, q.ust); pg.drawImage(im, { x: Math.min(a[0], b[0]), y: Math.min(a[1], b[1]), width: Math.abs(b[0] - a[0]), height: Math.abs(b[1] - a[1]), rotate: degrees(rotT) }); break; }
+            if (e.parca && e.parca.length) { const sat = Parca.satirlar(e); for (let i = 0; i < sat.length; i++) { let dx = 0; for (const q of sat[i]) { const ff = await font(e.font, q.b, e.i), o = N(e.x + dx, e.y - i * e.size * 1.2);
+                pg.drawText(q.s, { x: o[0], y: o[1], size: e.size * S, font: ff, color: rgb(...e.color), opacity: e.opacity ?? 1, rotate: degrees(rotT) }); try { dx += ff.widthOfTextAtSize(q.s, e.size); } catch (x) { } } } break; }
             lines.forEach((s, i) => { if (!s) return; const o = N(e.x, e.y - i * e.size * 1.2); pg.drawText(s, { x: o[0], y: o[1], size: e.size * S, font: f, color: rgb(...e.color), opacity: e.opacity ?? 1, rotate: degrees(rotT) }); }); break; }
           case 'image': { const im = e.type2 === 'png' ? await out.embedPng(e.bytes) : await out.embedJpg(e.bytes); const k = kutu(); pg.drawImage(im, { ...k, rotate: degrees(rotT) }); break; }
           case 'note': { const a = N(e.x, e.y); const annot = out.context.obj({ Type: 'Annot', Subtype: 'Text', Rect: [a[0], a[1], a[0] + 18, a[1] + 18], Contents: PDFHexString.fromText(e.text), T: PDFHexString.fromText(e.author || St.meta.author || ''), Name: 'Comment', C: [0.96, 0.79, 0.27], F: 4, Open: false, M: PDFHexString.fromText(new Date().toISOString()) });
@@ -1434,7 +1459,7 @@ const UI = {
     document.title = 'PDF Düzenleyici';
     $('#app').innerHTML = `
     <header class="top"><button class="btn ic ghost mob" id="bSide" title="Sayfalar" aria-label="Sayfalar">${ic('pages')}</button>
-      <div class="logo">${ic('logo', 24)}<span>PDF Düzenleyici<small class="surum-et" style="font:500 11px/1.2 system-ui,sans-serif;opacity:.65;margin-left:8px;letter-spacing:.02em;white-space:nowrap">sürüm 1.7 · 27.10.2026</small></span></div><div class="docname" id="docName"></div>
+      <div class="logo">${ic('logo', 24)}<span>PDF Düzenleyici<small class="surum-et" style="font:500 11px/1.2 system-ui,sans-serif;opacity:.65;margin-left:8px;letter-spacing:.02em;white-space:nowrap">sürüm 1.8 · 30.10.2026</small></span></div><div class="docname" id="docName"></div>
       <button class="btn ic hb" id="bUndo" title="Geri al (Ctrl+Z)" aria-label="Geri al" disabled>${ic('undo')}<span class="hb-y">Geri</span></button><button class="btn ic hb" id="bRedo" title="Yinele (Ctrl+Y)" aria-label="Yinele" disabled>${ic('redo')}<span class="hb-y">İleri</span></button><button class="btn ic hb" id="bCizgi" title="Kesik çizgileri gizle / göster" aria-pressed="false"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="3 3"><rect x="4" y="5" width="16" height="14" rx="1"/></svg><span class="hb-y">Çizgiler</span></button><button class="btn ic hb" id="bBaski" title="Baskı önizleme — sayfanın yazıcıdan çıkacak hâli"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg><span class="hb-y">Baskı önizleme</span></button>
       <button class="btn" id="bOpen" title="PDF veya görsel ekle">${ic('open')}<span class="lbl">Ekle</span></button>
       <button class="btn pri" id="bSave" disabled>${ic('save')}<span class="lbl">Kaydet</span></button>

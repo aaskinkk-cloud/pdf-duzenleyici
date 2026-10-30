@@ -1,5 +1,9 @@
 # PDF Düzenleyici
 
+## 1.8 (30.10.2026) — Kısmen kalın yazı
+- Düzenlenen satırda **yalnız seçilen kelime(ler) kalın** olur: kelimeyi seçip sağ paneldeki **K** ya da **Ctrl+B**. Seçim yoksa K tüm satırı kalın yapar (eskisi gibi). PDF'e, önizlemeye ve tozlu yazıya aynen yansır.
+- Açılış ekranındaki **Dosya seç** düğmesinde simge görünür, simge ve yazı ortalı.
+
 ## 1.7 (27.10.2026) — Metin düzenleme araçları, baskı önizleme, BelgeNet uyumu
 - Düzenlenen/eklenen metinde **tutamaklar** (köşeler orantılı büyütür-küçültür, ✥ taşır), **yön tuşlarıyla taşıma** (0,5 pt; Shift 5 pt; yazarken Alt+yön; panelde ◀▲▼▶).
 - **Yoğunluk** sürgüsü (sola soluk/şeffaf, sağa koyu; PDF'e de yazılır) ve **taranmış (tozlu) yazı** seçeneği (toz miktarı ayarlanır; PDF'te görsel olarak).
