@@ -1,5 +1,8 @@
 # PDF Düzenleyici
 
+## 2.1 (30.10.2026) — Taranmış belgede yine satırın tamamı
+- Taranmış (OCR katmanlı) sayfada da tıklanan **görünen satırın tamamı** düzenlenir (kelime kelime değil). Yazı tipi/punto/kalınlık görünen harflerden bulunmaya devam eder; OCR kelime sayısı görünen kelimelerle aynıysa kalın kısımlar korunur. Satır metni gizli OCR katmanından gelir, hatalı harfler düzeltilir. Aynı görsel satıra ikinci tıklama yeni düzenleme açmaz.
+
 ## 2.0 (30.10.2026) — Yazı tipi görünen harflerden; taranmış belgede kelime düzenleme
 - **Yazı tipi, punto, kalınlık görünen harflerden bulunur:** satırın çizgi kontrastı (Times'ta ince yatay / kalın dikey çizgiler), gövde kalınlığı ve x-yüksekliği Times / Arial / Courier × düz / kalın örnekleriyle karşılaştırılır. Taranmış belgelerdeki gizli OCR katmanı çoğu zaman "Arial" adı taşır; artık bu ada bakılmaz. Normal PDF'te yazı tipi adı belirsizse de aynı yöntem kullanılır.
 - **Taranmış (OCR katmanlı) sayfa:** görünen yazı resimdir, altındaki OCR metni hatalı olabilir (İlçemiz → Ilgemiz). Bu yüzden satırın tamamı değil, **yalnız dokunulan kelime** (sürüklenirse kelime aralığı) düzenlenir; diğer kelimeler orijinal resim olarak kalır. Kelime sınırları resimdeki boşluklardan, satır yüksekliği görünen satırdan bulunur; örtü satırın tam yüksekliğinde ve kağıt dokusuyla.

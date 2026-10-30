@@ -1002,7 +1002,7 @@ const Props = {
     const cizTool = ['pen', 'rect', 'ellipse', 'line', 'arrow'].includes(t) || (sec && ['ink', 'rect', 'ellipse', 'line', 'arrow'].includes(sec.t));
     const kaynak = sec || s;
     const stiller = [...St.styles.values()].sort((a, b) => b.n - a.n).slice(0, 12);
-    const ipucu = { select: 'Nesneye dokun: seç, sürükle: taşı, köşe: boyutlandır. Delete: sil.', edit: 'Değiştirmek istediğin satıra dokun. Yazı tipi, punto ve renk otomatik algılanır; satırı silmek için metni boşalt. Taranmış belgede yalnız dokunduğun kelime (sürüklersen kelime aralığı) düzenlenir, diğerleri olduğu gibi kalır.', text: 'Yazmak istediğin yere dokun.', pen: 'Serbest çizim.', rect: 'Dikdörtgen çiz.', ellipse: 'Elips çiz.', line: 'Çizgi çiz.', arrow: 'Ok çiz.', highlight: 'Vurgulanacak metnin üzerinden sürükle.', underline: 'Altı çizilecek metnin üzerinden sürükle.', strike: 'Üstü çizilecek metnin üzerinden sürükle.', note: 'Not eklemek için sayfaya dokun. Notlar PDF okuyucularda yorum olarak açılır.', whiteout: 'Gizlenecek alanı çiz (zemin rengiyle kapatılır).' }[t] || '';
+    const ipucu = { select: 'Nesneye dokun: seç, sürükle: taşı, köşe: boyutlandır. Delete: sil.', edit: 'Değiştirmek istediğin satıra dokun. Yazı tipi, punto ve renk otomatik algılanır; satırı silmek için metni boşalt. Taranmış belgede satırın metni gizli OCR katmanından gelir; hatalı harfleri düzelt.', text: 'Yazmak istediğin yere dokun.', pen: 'Serbest çizim.', rect: 'Dikdörtgen çiz.', ellipse: 'Elips çiz.', line: 'Çizgi çiz.', arrow: 'Ok çiz.', highlight: 'Vurgulanacak metnin üzerinden sürükle.', underline: 'Altı çizilecek metnin üzerinden sürükle.', strike: 'Üstü çizilecek metnin üzerinden sürükle.', note: 'Not eklemek için sayfaya dokun. Notlar PDF okuyucularda yorum olarak açılır.', whiteout: 'Gizlenecek alanı çiz (zemin rengiyle kapatılır).' }[t] || '';
     /* 1.5: sağ panel bölümlere ayrıldı — her bölüm başlığa dokununca açılır/kapanır; durum hatırlanır */
     let kap = {}; try { kap = JSON.parse(localStorage.getItem('pe-pk') || '{}'); } catch (x) { }
     const bol = (k, ad, ik, ic, alt = '') => ic ? `<section class="pk${kap[k] ? ' kapali' : ''}" data-k="${k}"><button class="pk-b" type="button" aria-expanded="${!kap[k]}"><span class="pk-ik">${ik}</span><span class="pk-ad">${ad}</span>${alt ? `<span class="pk-alt">${alt}</span>` : ''}<span class="pk-ok">▾</span></button><div class="pk-i">${ic}</div></section>` : '';
@@ -1509,7 +1509,7 @@ const UI = {
     document.title = 'PDF Düzenleyici';
     $('#app').innerHTML = `
     <header class="top"><button class="btn ic ghost mob" id="bSide" title="Sayfalar" aria-label="Sayfalar">${ic('pages')}</button>
-      <div class="logo">${ic('logo', 24)}<span>PDF Düzenleyici<small class="surum-et" style="font:500 11px/1.2 system-ui,sans-serif;opacity:.65;margin-left:8px;letter-spacing:.02em;white-space:nowrap">sürüm 2.0 · 30.10.2026</small></span></div><div class="docname" id="docName"></div>
+      <div class="logo">${ic('logo', 24)}<span>PDF Düzenleyici<small class="surum-et" style="font:500 11px/1.2 system-ui,sans-serif;opacity:.65;margin-left:8px;letter-spacing:.02em;white-space:nowrap">sürüm 2.1 · 30.10.2026</small></span></div><div class="docname" id="docName"></div>
       <button class="btn ic hb" id="bUndo" title="Geri al (Ctrl+Z)" aria-label="Geri al" disabled>${ic('undo')}<span class="hb-y">Geri</span></button><button class="btn ic hb" id="bRedo" title="Yinele (Ctrl+Y)" aria-label="Yinele" disabled>${ic('redo')}<span class="hb-y">İleri</span></button><button class="btn ic hb" id="bCizgi" title="Kesik çizgileri gizle / göster" aria-pressed="false"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="3 3"><rect x="4" y="5" width="16" height="14" rx="1"/></svg><span class="hb-y">Çizgiler</span></button><button class="btn ic hb" id="bBaski" title="Baskı önizleme — sayfanın yazıcıdan çıkacak hâli"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg><span class="hb-y">Önizleme</span></button>
       <button class="btn" id="bOpen" title="PDF veya görsel ekle">${ic('open')}<span class="lbl">Ekle</span></button>
       <button class="btn pri" id="bSave" disabled>${ic('save')}<span class="lbl">Kaydet</span></button>
@@ -1661,7 +1661,7 @@ const Esles = {
     if (!aile) return null; const T = tablo[aile.f], kalin = T.Bd.oz && Math.abs(ozS.kalin - T.Bd.oz.kalin) < Math.abs(ozS.kalin - T.R.oz.kalin), C = kalin ? T.Bd : T.R;
     tg.font = C.fnt(C.fs); const mt = tg.measureText(metin), bx = ok.x0 + mt.actualBoundingBoxLeft, by = yb + 1;
     const [px, py] = B.pdf(bx, by), [, py2] = B.pdf(bx, by - C.fs);
-    return { font: aile.f, b: kalin, size: Math.round(Math.abs(py2 - py) * 2) / 2, x: px, y: py, puan: -aile.fark };
+    return { font: aile.f, b: kalin, size: Math.round(Math.abs(py2 - py) * 2) / 2, x: px, y: py, puan: -aile.fark, T, xh };
   }
 };
 (function () {
@@ -1700,8 +1700,9 @@ const Esles = {
     const pxOf = cx => { const pdfp = View.v.convertToPdfPoint(cx - r0.left, 0); const a = B.vp.convertToViewportPoint(pdfp[0], 0); return a[0] - B.x0; };
     const t1 = son ? pxOf(son.x) : (seg[0].xa + seg[0].xb) / 2, t2 = Overlay._sonTik != null ? pxOf(Overlay._sonTik) : t1;
     const yak = px => { let en = 0, ed = 1e9; seg.forEach((s, j) => { const dd = px < s.xa ? s.xa - px : px > s.xb ? px - s.xb : 0; if (dd < ed) { ed = dd; en = j; } }); return en; };
-    let a = yak(Math.min(t1, t2)), b = yak(Math.max(t1, t2));
-    const anahtar = i + ':' + a + '-' + b; if (p.edits.some(e => e.line === anahtar)) { Busy.kapat(); return; }
+    /* 2.1: taranmış sayfada da görünen satırın TAMAMI düzenlenir (kelime kelime değil) */
+    let a = 0, b = seg.length - 1; void yak; void t1; void t2;
+    const anahtar = 'g' + Math.round(B.pdf(0, B.H)[1]) + ':' + Math.round(B.pdf(seg[0].xa, 0)[0]); if (p.edits.some(e => e.line === anahtar)) { Busy.kapat(); return; }
     /* OCR metnini kelimelere dağıt: parça konumlarıyla, olmazsa sırayla */
     /* aynı görsel satırdaki tüm OCR parçaları (OCR kelimeleri ayrı satır sayılmış olabilir) konumlarına göre kelimelere dağıtılır */
     const havuz = [...new Set(View.lines.filter(q => Math.abs(q.y - l.y) < l.size * .5).flatMap(q => q.parts || []))].filter((q, k, a) => a.findIndex(z => z.x === q.x && z.s === q.s) === k);
@@ -1709,16 +1710,21 @@ const Esles = {
     let metin = havuz.filter(q => { const c = q.x + q.w / 2; return c >= xa - 1 && c <= xb + 1; }).sort((p1, p2) => p1.x - p2.x).map(q => q.s).join(' ').replace(/\s+/g, ' ').trim();
     if (!metin) { const tum = View.lines.filter(q => Math.abs(q.y - l.y) < l.size * .5).map(q => q.text).join(' ').split(/\s+/).filter(Boolean); if (tum.length === seg.length) metin = tum.slice(a, b + 1).join(' '); }
     let r = null; try { r = await Esles.bul(B, metin, seg[a].xa, seg[b].xb); } catch (x) { }
+    /* kelime kalınlıkları: OCR kelime sayısı görünen kelime sayısıyla aynıysa kalın/normal parçalar korunur */
+    let parca = null; try { const kel = metin.split(/\s+/).filter(Boolean); if (r && r.T && r.T.Bd.oz && kel.length === seg.length) {
+      const kb = seg.map(sg => { const oz = Esles.ozellik(B.m, B.W, B.H, sg.k), k = oz.gov / r.xh; return Math.abs(k - r.T.Bd.oz.kalin) < Math.abs(k - r.T.R.oz.kalin); });
+      if (kb.some(Boolean) && !kb.every(Boolean)) { parca = []; kel.forEach((w, j) => { const t = (j ? ' ' : '') + w, son = parca[parca.length - 1]; if (son && son.b === kb[j]) son.s += t; else parca.push({ s: t, b: kb[j] }); }); } } } catch (x) { }
     Busy.kapat();
     const ka = Esles.kutu(B.m, B.W, B.H, seg[a].xa, seg[b].xb), lkk = Esles.kutu(B.m, B.W, B.H), pad = 3 * S / 4; if (lkk) { ka.y0 = Math.min(ka.y0, lkk.y0); ka.y1 = Math.max(ka.y1, lkk.y1); }   /* örtü satırın tam yüksekliğinde (ç, ş, İ izleri kalmasın) */
     const p1 = B.pdf(Math.max(0, ka.x0 - pad), Math.max(0, ka.y0 - pad)), p2 = B.pdf(Math.min(B.W, ka.x1 + pad), Math.min(B.H, ka.y1 + pad));
     const kapak = { x: Math.min(p1[0], p2[0]), y: Math.min(p1[1], p2[1]), w: Math.abs(p2[0] - p1[0]), h: Math.abs(p2[1] - p1[1]), color: B.zemin };
     const font = r ? r.font : 'tinos', bb = r ? r.b : false, size = r && r.size >= 4 ? r.size : l.size, x = r ? r.x : B.pdf(ka.x0, 0)[0], y = r ? r.y : B.pdf(0, ka.y1)[1];
     Hist.kaydet(); await Fonts.loadCss(font, bb, false);
-    const e = { id: uid(), t: 'replace', line: anahtar, x, y, text: metin, orig: metin, font, b: bb, i: false, size, color: B.yazi, cover: kapak, ocr: true };
-    e.os = { font, b: bb, i: false, size, color: B.yazi.join(','), x, y, cz: B.zemin.join(','), parca: null };
+    const e = { id: uid(), t: 'replace', line: anahtar, x, y, text: metin, orig: metin, font, b: parca ? false : bb, i: false, size, color: B.yazi, cover: kapak, ocr: true };
+    if (parca) { e.parca = parca; await Fonts.loadCss(font, true, false); await Fonts.loadCss(font, false, false); }
+    e.os = { font, b: e.b, i: false, size, color: B.yazi.join(','), x, y, cz: B.zemin.join(','), parca: parca ? JSON.stringify(parca) : null };
     p.edits.push(e); St.selObj = e.id; this.ciz(); Props.ciz(); this.odak(e); this._surukle = false;
-    toast(`Taranmış belge: yalnız seçilen kelime düzenlenir · ${Fonts.AD[font]}${bb ? ' kalın' : ''} ${size} pt (görünen harflerden)`, 'ok', 4500);
+    toast(`Taranmış belge · ${Fonts.AD[font]}${parca ? ' (kalın kısımlar korundu)' : bb ? ' kalın' : ''} ${size} pt — görünen harflerden. OCR metnindeki hataları düzeltin.`, 'ok', 5000);
     ZeminDoku.uret(p, kapak).then(u => { if (!u || !p.edits.includes(e)) return; kapak.img = u; const o = $(`#ov [data-kapak="${e.id}"]`); if (o) Object.assign(o.style, { backgroundImage: `url(${u})`, backgroundSize: '100% 100%' }); });
   };
   /* sürükleyerek kelime aralığı: bırakılan nokta */
