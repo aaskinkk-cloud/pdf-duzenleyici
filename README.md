@@ -1,5 +1,10 @@
 # PDF Düzenleyici
 
+## 2.0 (30.10.2026) — Yazı tipi görünen harflerden; taranmış belgede kelime düzenleme
+- **Yazı tipi, punto, kalınlık görünen harflerden bulunur:** satırın çizgi kontrastı (Times'ta ince yatay / kalın dikey çizgiler), gövde kalınlığı ve x-yüksekliği Times / Arial / Courier × düz / kalın örnekleriyle karşılaştırılır. Taranmış belgelerdeki gizli OCR katmanı çoğu zaman "Arial" adı taşır; artık bu ada bakılmaz. Normal PDF'te yazı tipi adı belirsizse de aynı yöntem kullanılır.
+- **Taranmış (OCR katmanlı) sayfa:** görünen yazı resimdir, altındaki OCR metni hatalı olabilir (İlçemiz → Ilgemiz). Bu yüzden satırın tamamı değil, **yalnız dokunulan kelime** (sürüklenirse kelime aralığı) düzenlenir; diğer kelimeler orijinal resim olarak kalır. Kelime sınırları resimdeki boşluklardan, satır yüksekliği görünen satırdan bulunur; örtü satırın tam yüksekliğinde ve kağıt dokusuyla.
+- Yeni yazı yandaki kelimeye taşarsa uyarı verir (kelimeleri sürükleyerek birlikte seçin).
+
 ## 1.9 (30.10.2026) — Orijinal kağıt dokusu, kalınlık korunur, yeni üst çubuk
 - Eski yazıyı örten kutu artık **düz renk değil, kağıdın kendisi**: bölge sayfadan yüksek çözünürlükte alınır, yazı silinip çevredeki kağıt tonu ve kumlamasıyla doldurulur (taranmış, renk tonu değişen belgelerde leke kalmaz). Zemin bölümünde "Orijinal kağıt dokusu" kutusu; renk seçilirse düz renge döner.
 - Satırda kalın ve normal parçalar karışıksa (ör. "İlçemiz **Ardıç Mahallesi**, …") düzenlemede kalınlık korunur.

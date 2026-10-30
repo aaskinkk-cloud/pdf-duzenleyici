@@ -747,9 +747,9 @@ const ZeminDoku = {
       g.fillStyle = '#fff'; g.fillRect(0, 0, W, H); await pg.render({ canvasContext: g, viewport: vp, transform: [1, 0, 0, 1, -x0, -y0] }).promise;
       const im = g.getImageData(0, 0, W, H), d = im.data, N = W * H, lum = new Float32Array(N);
       for (let i = 0; i < N; i++) lum[i] = d[i * 4] * .3 + d[i * 4 + 1] * .59 + d[i * 4 + 2] * .11;
-      const sira = Array.from(lum).sort((x, y) => x - y), zem = sira[Math.floor(N * .8)], esik = zem - 38;
+      const sira = Array.from(lum).sort((x, y) => x - y), zem = sira[Math.floor(N * .8)], esik = zem - 24;   /* 2.0: soluk kenar izleri de silinsin */
       let m = new Uint8Array(N); for (let i = 0; i < N; i++) if (lum[i] < esik) m[i] = 1;
-      for (let t = 0; t < 2; t++) { const m2 = m.slice(); for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const i = y * W + x; if (m[i]) continue; if ((x > 0 && m[i - 1]) || (x < W - 1 && m[i + 1]) || (y > 0 && m[i - W]) || (y < H - 1 && m[i + W])) m2[i] = 1; } m = m2; }
+      for (let t = 0; t < 3; t++) { const m2 = m.slice(); for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const i = y * W + x; if (m[i]) continue; if ((x > 0 && m[i - 1]) || (x < W - 1 && m[i + 1]) || (y > 0 && m[i - W]) || (y < H - 1 && m[i + W])) m2[i] = 1; } m = m2; }
       let s1 = 0, s2 = 0, n = 0; for (let i = 0; i < N; i++) if (!m[i]) { s1 += lum[i]; s2 += lum[i] * lum[i]; n++; }
       if (n < N * .15) return null; const sd = Math.min(18, Math.sqrt(Math.max(0, s2 / n - (s1 / n) ** 2)));
       /* mürekkebi çevreden doldur (kenardan içe doğru yayılım) */
@@ -833,7 +833,7 @@ const Overlay = {
         if (e.doku) Doku.ekran(d, e, v);
         if (secili && !v.rotation) this.tutamak(d, e, v, p);
         d.addEventListener('focus', () => { St.selObj = e.id; Props.ciz(); d._once = d._once || (Hist.kaydet(), true); });
-        d.addEventListener('input', ev => { e.text = d.innerText.replace(/\n$/, ''); if (e.parca || (ev && ev.inputType === 'formatBold')) { Parca.oku(d, e); if (ev && ev.inputType === 'formatBold') { Fonts.loadCss(e.font, true, e.i); Fonts.loadCss(e.font, false, e.i); Props.ciz(); } } });
+        d.addEventListener('input', ev => { e.text = d.innerText.replace(/\n$/, ''); if (e.ocr && e.cover && !e._tasti) { const kw = Math.abs(v.convertToViewportRectangle([e.cover.x, 0, e.cover.x + e.cover.w, 0])[2] - v.convertToViewportRectangle([e.cover.x, 0, e.cover.x + e.cover.w, 0])[0]); if (d.offsetWidth > kw + 4) { e._tasti = true; toast('Yeni yazı yandaki kelimenin üstüne taşıyor — kelimeleri sürükleyerek birlikte seçip hepsini yazın', 'err', 6000); } } if (e.parca || (ev && ev.inputType === 'formatBold')) { Parca.oku(d, e); if (ev && ev.inputType === 'formatBold') { Fonts.loadCss(e.font, true, e.i); Fonts.loadCss(e.font, false, e.i); Props.ciz(); } } });
         d.addEventListener('blur', () => { d._once = false; e.text = d.innerText.replace(/\n$/, ''); if (this.degismedi(e)) setTimeout(() => { const a = document.activeElement; if (St.selObj === e.id && a && (a.closest('#props,.props,#panel,aside') || a === d)) return; if (this.degismedi(e)) { p.edits = p.edits.filter(x => x !== e); if (St.selObj === e.id) St.selObj = null; this.ciz(); Props.ciz(); } }, 150); if (e.t === 'text' && !e.text.trim()) { p.edits = p.edits.filter(x => x !== e); this.ciz(); } Thumbs.yenile(p); });
       } else if (e.t === 'image') {
         const k = kutu(e); const d = document.createElement('div'); d.className = 'obj' + (secili ? ' sel' : ''); d.dataset.id = e.id; Object.assign(d.style, { left: k.l + 'px', top: k.t + 'px', width: k.w + 'px', height: k.h + 'px' });
@@ -1002,7 +1002,7 @@ const Props = {
     const cizTool = ['pen', 'rect', 'ellipse', 'line', 'arrow'].includes(t) || (sec && ['ink', 'rect', 'ellipse', 'line', 'arrow'].includes(sec.t));
     const kaynak = sec || s;
     const stiller = [...St.styles.values()].sort((a, b) => b.n - a.n).slice(0, 12);
-    const ipucu = { select: 'Nesneye dokun: seç, sürükle: taşı, köşe: boyutlandır. Delete: sil.', edit: 'Değiştirmek istediğin satıra dokun. Yazı tipi, punto ve renk otomatik algılanır; satırı silmek için metni boşalt.', text: 'Yazmak istediğin yere dokun.', pen: 'Serbest çizim.', rect: 'Dikdörtgen çiz.', ellipse: 'Elips çiz.', line: 'Çizgi çiz.', arrow: 'Ok çiz.', highlight: 'Vurgulanacak metnin üzerinden sürükle.', underline: 'Altı çizilecek metnin üzerinden sürükle.', strike: 'Üstü çizilecek metnin üzerinden sürükle.', note: 'Not eklemek için sayfaya dokun. Notlar PDF okuyucularda yorum olarak açılır.', whiteout: 'Gizlenecek alanı çiz (zemin rengiyle kapatılır).' }[t] || '';
+    const ipucu = { select: 'Nesneye dokun: seç, sürükle: taşı, köşe: boyutlandır. Delete: sil.', edit: 'Değiştirmek istediğin satıra dokun. Yazı tipi, punto ve renk otomatik algılanır; satırı silmek için metni boşalt. Taranmış belgede yalnız dokunduğun kelime (sürüklersen kelime aralığı) düzenlenir, diğerleri olduğu gibi kalır.', text: 'Yazmak istediğin yere dokun.', pen: 'Serbest çizim.', rect: 'Dikdörtgen çiz.', ellipse: 'Elips çiz.', line: 'Çizgi çiz.', arrow: 'Ok çiz.', highlight: 'Vurgulanacak metnin üzerinden sürükle.', underline: 'Altı çizilecek metnin üzerinden sürükle.', strike: 'Üstü çizilecek metnin üzerinden sürükle.', note: 'Not eklemek için sayfaya dokun. Notlar PDF okuyucularda yorum olarak açılır.', whiteout: 'Gizlenecek alanı çiz (zemin rengiyle kapatılır).' }[t] || '';
     /* 1.5: sağ panel bölümlere ayrıldı — her bölüm başlığa dokununca açılır/kapanır; durum hatırlanır */
     let kap = {}; try { kap = JSON.parse(localStorage.getItem('pe-pk') || '{}'); } catch (x) { }
     const bol = (k, ad, ik, ic, alt = '') => ic ? `<section class="pk${kap[k] ? ' kapali' : ''}" data-k="${k}"><button class="pk-b" type="button" aria-expanded="${!kap[k]}"><span class="pk-ik">${ik}</span><span class="pk-ad">${ad}</span>${alt ? `<span class="pk-alt">${alt}</span>` : ''}<span class="pk-ok">▾</span></button><div class="pk-i">${ic}</div></section>` : '';
@@ -1509,7 +1509,7 @@ const UI = {
     document.title = 'PDF Düzenleyici';
     $('#app').innerHTML = `
     <header class="top"><button class="btn ic ghost mob" id="bSide" title="Sayfalar" aria-label="Sayfalar">${ic('pages')}</button>
-      <div class="logo">${ic('logo', 24)}<span>PDF Düzenleyici<small class="surum-et" style="font:500 11px/1.2 system-ui,sans-serif;opacity:.65;margin-left:8px;letter-spacing:.02em;white-space:nowrap">sürüm 1.9 · 30.10.2026</small></span></div><div class="docname" id="docName"></div>
+      <div class="logo">${ic('logo', 24)}<span>PDF Düzenleyici<small class="surum-et" style="font:500 11px/1.2 system-ui,sans-serif;opacity:.65;margin-left:8px;letter-spacing:.02em;white-space:nowrap">sürüm 2.0 · 30.10.2026</small></span></div><div class="docname" id="docName"></div>
       <button class="btn ic hb" id="bUndo" title="Geri al (Ctrl+Z)" aria-label="Geri al" disabled>${ic('undo')}<span class="hb-y">Geri</span></button><button class="btn ic hb" id="bRedo" title="Yinele (Ctrl+Y)" aria-label="Yinele" disabled>${ic('redo')}<span class="hb-y">İleri</span></button><button class="btn ic hb" id="bCizgi" title="Kesik çizgileri gizle / göster" aria-pressed="false"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="3 3"><rect x="4" y="5" width="16" height="14" rx="1"/></svg><span class="hb-y">Çizgiler</span></button><button class="btn ic hb" id="bBaski" title="Baskı önizleme — sayfanın yazıcıdan çıkacak hâli"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg><span class="hb-y">Önizleme</span></button>
       <button class="btn" id="bOpen" title="PDF veya görsel ekle">${ic('open')}<span class="lbl">Ekle</span></button>
       <button class="btn pri" id="bSave" disabled>${ic('save')}<span class="lbl">Kaydet</span></button>
@@ -1598,4 +1598,131 @@ const UI = {
 
 /* ---------------- başlat ---------------- */
 document.addEventListener('DOMContentLoaded', () => { try { UI.kur(); } catch (e) { document.body.innerHTML = '<p style="padding:20px">Uygulama başlatılamadı: ' + esc(e.message) + '</p>'; } });
-</script><script>if('serviceWorker' in navigator&&/(github\.io|pages\.dev)$/.test(location.hostname)&&window.top===window)navigator.serviceWorker.register('sw.js').catch(function(){})</script></body></html>
+</script><script>
+/* ---------------- 2.0: yazı tipi eşleştirme ve taranmış belgede kelime düzenleme ----------------
+   1) Yazı tipi adı belirsizse ya da sayfa taranmış (OCR katmanlı) ise, satırın GÖRÜNEN harfleri Times / Arial / Courier ×
+      düz / kalın adaylarıyla piksel piksel karşılaştırılır; en çok örtüşen yazı tipi, punto ve kalınlık seçilir.
+   2) Taranmış sayfada görünen yazı bir resimdir; altındaki gizli OCR metni sık sık hatalıdır (İlçemiz → Ilgemiz).
+      Bu yüzden orada satırın tamamı değil, YALNIZ TIKLANAN KELİME (ya da sürüklenen kelime aralığı) düzenlenir;
+      diğer kelimeler orijinal resim olarak kalır. Kelime sınırları resimdeki boşluklardan bulunur. */
+const Esles = {
+  S: 4,
+  async ocrMu(p) {
+    if (!p || !p.src || !p.src.doc) return false; if (p._ocr != null) return p._ocr;
+    try { const pg = await St.docs.get(p.src.doc).pdf.getPage(p.src.index + 1), ol = await pg.getOperatorList(), O = pdfjsLib.OPS;
+      let var_ = false; for (let i = 0; i < ol.fnArray.length; i++) if (ol.fnArray[i] === O.setTextRenderingMode) { const m = ol.argsArray[i] && ol.argsArray[i][0]; if (m === 3 || m === 7) { var_ = true; break; } }
+      p._ocr = var_; } catch (e) { p._ocr = false; } return p._ocr;
+  },
+  async bolge(p, k) {
+    const pg = await St.docs.get(p.src.doc).pdf.getPage(p.src.index + 1), S = this.S, vp = pg.getViewport({ scale: S }), a = vp.convertToViewportRectangle([k.x, k.y, k.x + k.w, k.y + k.h]);
+    const x0 = Math.floor(Math.min(a[0], a[2])), y0 = Math.floor(Math.min(a[1], a[3])), W = Math.max(4, Math.ceil(Math.abs(a[2] - a[0]))), H = Math.max(4, Math.ceil(Math.abs(a[3] - a[1])));
+    const c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d', { willReadFrequently: true }); g.fillStyle = '#fff'; g.fillRect(0, 0, W, H);
+    await pg.render({ canvasContext: g, viewport: vp, transform: [1, 0, 0, 1, -x0, -y0] }).promise;
+    const d = g.getImageData(0, 0, W, H).data, N = W * H, lum = new Float32Array(N); for (let i = 0; i < N; i++) lum[i] = d[i * 4] * .3 + d[i * 4 + 1] * .59 + d[i * 4 + 2] * .11;
+    const sr = Array.from(lum).sort((x, y) => x - y), zem = sr[Math.floor(N * .8)], esik = zem - 45, m = new Uint8Array(N); for (let i = 0; i < N; i++) if (lum[i] < esik) m[i] = 1;
+    /* tablo çizgileri (uzun yatay/dikey koşular) mürekkep sayılmaz */
+    for (let y = 0; y < H; y++) { let n = 0; for (let x = 0; x < W; x++) n += m[y * W + x]; if (n > W * .85) for (let x = 0; x < W; x++) m[y * W + x] = 0; }
+    for (let x = 0; x < W; x++) { let n = 0; for (let y = 0; y < H; y++) n += m[y * W + x]; if (n > H * .85) for (let y = 0; y < H; y++) m[y * W + x] = 0; }
+    /* renkler */
+    let zr = 0, zg = 0, zb = 0, zn = 0, kr = 0, kg = 0, kb = 0, kn = 0; const koyu = sr[Math.floor(N * .02)] + 40;
+    for (let i = 0; i < N; i++) { if (!m[i] && lum[i] >= zem - 15) { zr += d[i * 4]; zg += d[i * 4 + 1]; zb += d[i * 4 + 2]; zn++; } else if (m[i] && lum[i] <= koyu) { kr += d[i * 4]; kg += d[i * 4 + 1]; kb += d[i * 4 + 2]; kn++; } }
+    const zemin = zn ? [zr / zn / 255, zg / zn / 255, zb / zn / 255] : [1, 1, 1], yazi = kn ? [kr / kn / 255, kg / kn / 255, kb / kn / 255].map(v => v < .15 ? 0 : v) : [0, 0, 0];
+    return { vp, x0, y0, W, H, m, zemin: zemin.every(v => v > .94) ? [1, 1, 1] : zemin, yazi, pdf: (px, py) => vp.convertToPdfPoint(px + x0, py + y0) };
+  },
+  kutu(m, W, H, xa = 0, xb = W) { let x0 = 1e9, y0 = 1e9, x1 = -1, y1 = -1; for (let y = 0; y < H; y++) for (let x = xa; x < xb; x++) if (m[y * W + x]) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; } return x1 < 0 ? null : { x0, y0, x1: x1 + 1, y1: y1 + 1 }; },
+  /* kelime sınırları: sütun izdüşümünde yazı yüksekliğinin ~%30'undan geniş boşluklar */
+  kelimeler(B) { const { m, W, H } = B, k = this.kutu(m, W, H); if (!k) return []; const col = new Uint16Array(W); for (let x = 0; x < W; x++) { let n = 0; for (let y = k.y0; y < k.y1; y++) n += m[y * W + x]; col[x] = n; }
+    const gmin = Math.max(3, (k.y1 - k.y0) * .16), seg = []; let bas = -1, bos = 0;
+    for (let x = 0; x <= W; x++) { const dolu = x < W && col[x] > 0; if (dolu) { if (bas < 0) bas = x; bos = 0; } else if (bas >= 0) { bos++; if (bos >= gmin || x === W) { seg.push([bas, x - bos + 1]); bas = -1; bos = 0; } } }
+    return seg.map(([a, b]) => ({ xa: a, xb: b, k: this.kutu(m, W, H, a, b) })).filter(s => s.k && (s.xb - s.xa) > 2);
+  },
+  /* çizgi özellikleri: dikey gövde kalınlığı (yatay koşular), yatay çizgi kalınlığı (dikey koşular) → kontrast ve kalınlık oranı */
+  ozellik(m, W, H, k) { const h = [], v = [], kh = k.y1 - k.y0, lim = Math.max(3, kh * .45);
+    for (let y = k.y0; y < k.y1; y++) { let n = 0; for (let x = k.x0; x <= k.x1; x++) { const o = x < k.x1 && m[y * W + x]; if (o) n++; else if (n) { if (n <= lim) h.push(n); n = 0; } } }
+    for (let x = k.x0; x < k.x1; x++) { let n = 0; for (let y = k.y0; y <= k.y1; y++) { const o = y < k.y1 && m[y * W + x]; if (o) n++; else if (n) { if (n <= lim) v.push(n); n = 0; } } }
+    const med = a => { if (!a.length) return 1; a.sort((p, q) => p - q); return a[Math.floor(a.length * .5)]; }, gov = med(h), yat = med(v);
+    return { kontrast: gov / Math.max(1, yat), kalin: gov / Math.max(1, kh), gov }; },
+  /* görünen harflerle yazı tipi/punto/kalınlık: aile satırın tamamının çizgi kontrastından, kalınlık seçilen kelimelerin
+     gövde kalınlığından, punto satırın x-yüksekliğinden, taban çizgisi yoğun bandın altından (OCR metni hatalı olsa da çalışır) */
+  async bul(B, metin, xa = 0, xb = B.W) {
+    const ok = this.kutu(B.m, B.W, B.H, xa, xb), lk = this.kutu(B.m, B.W, B.H); if (!ok || !lk) return null; metin = String(metin || '').trim() || 'Mahallesi';
+    const ozL = this.ozellik(B.m, B.W, B.H, lk), ozS = this.ozellik(B.m, B.W, B.H, ok);   /* kalınlık = gövde / x-yüksekliği (aşağıda) */
+    const rc = new Uint16Array(B.H); let rmax = 0; for (let y = lk.y0; y < lk.y1; y++) { let n = 0; for (let x = 0; x < B.W; x++) n += B.m[y * B.W + x]; rc[y] = n; if (n > rmax) rmax = n; }
+    let yt = -1, yb = -1; for (let y = lk.y0; y < lk.y1; y++) if (rc[y] >= rmax * .45) { if (yt < 0) yt = y; yb = y; } const xh = Math.max(4, yb - yt + 1); ozL.kalin = ozL.gov / xh; ozS.kalin = ozS.gov / xh;
+    const ORNEK = 'Hazine mahallesinde bulunan taşınmaz', tmp = document.createElement('canvas'), tg = tmp.getContext('2d', { willReadFrequently: true });
+    const ciz = async (f, b) => { await Fonts.loadCss(f, b, false); const fnt = s => `${b ? '700' : '400'} ${s}px ${Fonts.stack(f)}`; tg.font = fnt(100); const xr = tg.measureText('x').actualBoundingBoxAscent / 100, fs = xh / xr;
+      tg.font = fnt(fs); const w = Math.ceil(tg.measureText(ORNEK).width + 10), h = Math.ceil(fs * 1.5); tmp.width = w; tmp.height = h; tg.fillStyle = '#fff'; tg.fillRect(0, 0, w, h); tg.fillStyle = '#000'; tg.font = fnt(fs); tg.fillText(ORNEK, 4, fs * 1.1);
+      const d = tg.getImageData(0, 0, w, h).data, mm = new Uint8Array(w * h); for (let q = 0; q < w * h; q++) mm[q] = d[q * 4] < 128 ? 1 : 0; const k = this.kutu(mm, w, h), oz = k ? this.ozellik(mm, w, h, k) : null; if (oz) oz.kalin = oz.gov / (xr * fs); return { fs, oz, fnt }; };
+    let aile = null; const tablo = {};
+    for (const f of ['tinos', 'arimo', 'cousine']) { const R = await ciz(f, false), Bd = await ciz(f, true); tablo[f] = { R, Bd }; if (!R.oz) continue;
+      /* satır çoğunlukla düz ya da kalın olabilir: ikisinden yakın olanla kıyasla */
+      const fark = Math.min(Math.abs(Math.log(ozL.kontrast / R.oz.kontrast)) + Math.abs(ozL.kalin - R.oz.kalin) * 4, Bd.oz ? Math.abs(Math.log(ozL.kontrast / Bd.oz.kontrast)) + Math.abs(ozL.kalin - Bd.oz.kalin) * 4 : 9);
+      if (!aile || fark < aile.fark) aile = { f, fark }; }
+    if (!aile) return null; const T = tablo[aile.f], kalin = T.Bd.oz && Math.abs(ozS.kalin - T.Bd.oz.kalin) < Math.abs(ozS.kalin - T.R.oz.kalin), C = kalin ? T.Bd : T.R;
+    tg.font = C.fnt(C.fs); const mt = tg.measureText(metin), bx = ok.x0 + mt.actualBoundingBoxLeft, by = yb + 1;
+    const [px, py] = B.pdf(bx, by), [, py2] = B.pdf(bx, by - C.fs);
+    return { font: aile.f, b: kalin, size: Math.round(Math.abs(py2 - py) * 2) / 2, x: px, y: py, puan: -aile.fark };
+  }
+};
+(function () {
+  const AD_BELLI = /times|roman|serif|georgia|garamond|cambria|tinos|liberation|arial|helv|sans|calibri|verdana|tahoma|segoe|courier|mono|consol/i;
+  let son = null, basLb = null; document.addEventListener('pointerdown', ev => { if (ev.target.closest && ev.target.closest('#ov')) { son = { x: ev.clientX, y: ev.clientY }; basLb = St.tool === 'edit' ? ev.target.closest('.line-box') : null; Overlay._sonTik = null; } }, true);
+  /* kelimeden kelimeye sürükleme: bırakılan yer başka kutudaysa da aralık düzenlenir */
+  document.addEventListener('pointerup', ev => { if (!basLb || St.tool !== 'edit') return; const lb = basLb; basLb = null; const hedef = ev.target.closest && ev.target.closest('.line-box');
+    if (hedef !== lb && son && Math.abs(ev.clientX - son.x) > 6) { Overlay._sonTik = ev.clientX; Overlay._surukle = true; Overlay.satirDuzenle(lb); } }, true);
+  const eski = Overlay.satirDuzenle.bind(Overlay);
+  Overlay.satirDuzenle = async function (lb) {
+    const p = St.pages[St.cur]; if (!p || !View.v) return; const i = +lb.dataset.line, l = View.lines[i]; if (!l) return;
+    if (this._surukle && !arguments[1]) { /* sürükleme yolu zaten çağırdı; ardından gelen tıklamayı yok say */ } const ocr = await Esles.ocrMu(p);
+    if (!ocr) {   /* normal PDF: satır düzenleme; yazı tipi adı belirsizse görünen harflerden bul */
+      await eski(lb); if (AD_BELLI.test(l.fn || '')) return; const e = p.edits[p.edits.length - 1]; if (!e || e.line !== i) return;
+      try { const B = await Esles.bolge(p, { x: l.x - 1, y: l.y - l.size * .35, w: l.w + 2, h: l.size * 1.4 }), r = await Esles.bul(B, l.text);
+        if (r) { e.font = r.font; if (!e.parca) e.b = r.b; e.os.font = e.font; e.os.b = e.b; await Fonts.loadCss(e.font, e.b, e.i); this.ciz(); Props.ciz(); this.odak(e); toast(`Yazı tipi görünen harflerden bulundu: ${Fonts.AD[r.font]}${r.b ? ' kalın' : ''}`); } } catch (x) { }
+      return;
+    }
+    /* taranmış sayfa: tıklanan (ya da sürüklenen) kelime(ler) */
+    Busy.ac('Kelime ve yazı tipi bulunuyor…'); let B, seg;
+    try { const pw = p.w || 612;
+      /* OCR katmanının punto/konumu görünen yazıyla tutmayabilir: önce geniş bant al, görünen satırı satır izdüşümünden bul */
+      const B0 = await Esles.bolge(p, { x: 0, y: l.y - l.size * 1.6 - 8, w: pw, h: l.size * 4 + 16 }), rc = new Uint32Array(B0.H);
+      for (let y = 0; y < B0.H; y++) { let n = 0; for (let x = 0; x < B0.W; x++) n += B0.m[y * B0.W + x]; rc[y] = n; }
+      const hedefY = Math.round(B0.vp.convertToViewportPoint(l.x, l.y + l.size * .3)[1] - B0.y0); let ty = -1, ed = 1e9;
+      for (let y = 0; y < B0.H; y++) if (rc[y] && Math.abs(y - hedefY) < ed) { ed = Math.abs(y - hedefY); ty = y; }
+      if (ty >= 0) { const bos = Math.max(2, Math.round(Esles.S * .6)); let r0 = ty, r1 = ty, g = 0;
+        for (let y = ty - 1; y >= 0; y--) { if (rc[y]) { r0 = y; g = 0; } else if (++g > bos) break; } g = 0;
+        for (let y = ty + 1; y < B0.H; y++) { if (rc[y]) { r1 = y; g = 0; } else if (++g > bos) break; }
+        const ya = B0.pdf(0, r0)[1], yb2 = B0.pdf(0, r1 + 1)[1], ust = Math.max(ya, yb2) + 2, alt = Math.min(ya, yb2) - 2;
+        B = await Esles.bolge(p, { x: 0, y: alt, w: pw, h: ust - alt }); }
+      else B = await Esles.bolge(p, { x: 0, y: l.y - l.size * .4, w: pw, h: l.size * 1.5 });
+      seg = Esles.kelimeler(B); } catch (x) { Busy.kapat(); return eski(lb); }
+    if (!seg.length) { Busy.kapat(); return eski(lb); }
+    const ov = $('#ov'), r0 = ov.getBoundingClientRect(), S = Esles.S, vs = View.v.scale;
+    const pxOf = cx => { const pdfp = View.v.convertToPdfPoint(cx - r0.left, 0); const a = B.vp.convertToViewportPoint(pdfp[0], 0); return a[0] - B.x0; };
+    const t1 = son ? pxOf(son.x) : (seg[0].xa + seg[0].xb) / 2, t2 = Overlay._sonTik != null ? pxOf(Overlay._sonTik) : t1;
+    const yak = px => { let en = 0, ed = 1e9; seg.forEach((s, j) => { const dd = px < s.xa ? s.xa - px : px > s.xb ? px - s.xb : 0; if (dd < ed) { ed = dd; en = j; } }); return en; };
+    let a = yak(Math.min(t1, t2)), b = yak(Math.max(t1, t2));
+    const anahtar = i + ':' + a + '-' + b; if (p.edits.some(e => e.line === anahtar)) { Busy.kapat(); return; }
+    /* OCR metnini kelimelere dağıt: parça konumlarıyla, olmazsa sırayla */
+    /* aynı görsel satırdaki tüm OCR parçaları (OCR kelimeleri ayrı satır sayılmış olabilir) konumlarına göre kelimelere dağıtılır */
+    const havuz = [...new Set(View.lines.filter(q => Math.abs(q.y - l.y) < l.size * .5).flatMap(q => q.parts || []))].filter((q, k, a) => a.findIndex(z => z.x === q.x && z.s === q.s) === k);
+    const xa = B.pdf(seg[a].xa, 0)[0], xb = B.pdf(seg[b].xb, 0)[0];
+    let metin = havuz.filter(q => { const c = q.x + q.w / 2; return c >= xa - 1 && c <= xb + 1; }).sort((p1, p2) => p1.x - p2.x).map(q => q.s).join(' ').replace(/\s+/g, ' ').trim();
+    if (!metin) { const tum = View.lines.filter(q => Math.abs(q.y - l.y) < l.size * .5).map(q => q.text).join(' ').split(/\s+/).filter(Boolean); if (tum.length === seg.length) metin = tum.slice(a, b + 1).join(' '); }
+    let r = null; try { r = await Esles.bul(B, metin, seg[a].xa, seg[b].xb); } catch (x) { }
+    Busy.kapat();
+    const ka = Esles.kutu(B.m, B.W, B.H, seg[a].xa, seg[b].xb), lkk = Esles.kutu(B.m, B.W, B.H), pad = 3 * S / 4; if (lkk) { ka.y0 = Math.min(ka.y0, lkk.y0); ka.y1 = Math.max(ka.y1, lkk.y1); }   /* örtü satırın tam yüksekliğinde (ç, ş, İ izleri kalmasın) */
+    const p1 = B.pdf(Math.max(0, ka.x0 - pad), Math.max(0, ka.y0 - pad)), p2 = B.pdf(Math.min(B.W, ka.x1 + pad), Math.min(B.H, ka.y1 + pad));
+    const kapak = { x: Math.min(p1[0], p2[0]), y: Math.min(p1[1], p2[1]), w: Math.abs(p2[0] - p1[0]), h: Math.abs(p2[1] - p1[1]), color: B.zemin };
+    const font = r ? r.font : 'tinos', bb = r ? r.b : false, size = r && r.size >= 4 ? r.size : l.size, x = r ? r.x : B.pdf(ka.x0, 0)[0], y = r ? r.y : B.pdf(0, ka.y1)[1];
+    Hist.kaydet(); await Fonts.loadCss(font, bb, false);
+    const e = { id: uid(), t: 'replace', line: anahtar, x, y, text: metin, orig: metin, font, b: bb, i: false, size, color: B.yazi, cover: kapak, ocr: true };
+    e.os = { font, b: bb, i: false, size, color: B.yazi.join(','), x, y, cz: B.zemin.join(','), parca: null };
+    p.edits.push(e); St.selObj = e.id; this.ciz(); Props.ciz(); this.odak(e); this._surukle = false;
+    toast(`Taranmış belge: yalnız seçilen kelime düzenlenir · ${Fonts.AD[font]}${bb ? ' kalın' : ''} ${size} pt (görünen harflerden)`, 'ok', 4500);
+    ZeminDoku.uret(p, kapak).then(u => { if (!u || !p.edits.includes(e)) return; kapak.img = u; const o = $(`#ov [data-kapak="${e.id}"]`); if (o) Object.assign(o.style, { backgroundImage: `url(${u})`, backgroundSize: '100% 100%' }); });
+  };
+  /* sürükleyerek kelime aralığı: bırakılan nokta */
+  document.addEventListener('click', ev => { if (ev.target.closest && ev.target.closest('#ov .line-box')) Overlay._sonTik = ev.clientX; }, true);
+})();
+</script>
+<script>if('serviceWorker' in navigator&&/(github\.io|pages\.dev)$/.test(location.hostname)&&window.top===window)navigator.serviceWorker.register('sw.js').catch(function(){})</script></body></html>
