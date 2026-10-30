@@ -1,5 +1,9 @@
 # PDF Düzenleyici
 
+## 2.3 (30.10.2026)
+- Düzenlerken kelimeye **çift tık** kelimeyi seçer (önceden imleç sona atlıyordu).
+- **Çizgiler** kapalıyken köşe ve taşıma (✥) noktaları da gizlenir; taşıma yön tuşlarıyla sürer.
+
 ## 2.2 (30.10.2026) — Satır / Kelime düzenleme seçimi
 - Sağ panelin üstünde (Metni düzenle aracı) **Düzenleme: ▤ Satır · ▭ Kelime** düğmeleri; seçim hatırlanır.
   **Satır:** satırın tamamı tek kutuda. **Kelime:** yalnız dokunulan kelime (sürüklenirse kelime aralığı) düzenlenir, diğerleri olduğu gibi kalır — normal ve taranmış PDF'te. Normal PDF'te yazı tipi/punto/taban çizgisi PDF'in kendisinden; taranmışta görünen harflerden. Yeni yazı yandaki kelimeye taşarsa uyarır.
