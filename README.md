@@ -1,5 +1,15 @@
 # PDF Düzenleyici
 
+## Belge Stüdyosu 1.0 (01.11.2026) — PDF Düzenleyici + OCR Stüdyo tek pencerede (`studyo/`)
+Adres: https://aaskinkk-cloud.github.io/pdf-duzenleyici/studyo/ · Milli Emlak'ta "PDF Düzenleyici" ve "OCR Stüdyo" menüleri bunu açar (158+).
+- İki uygulama kendi çerçevesinde **hiç değiştirilmeden** çalışır; tüm işlevler aynen. İkisi de açık kalır, geçişte iş kaybolmaz.
+- Sol şerit (dar ekranda alt çubuk): **PDF** · **OCR** · **Aktar** · Tema · Tam ekran. Kısayol: Alt+1 / Alt+2, Alt+G aktar. Yeşil nokta = yüklendi; ikinci uygulama arka planda önceden yüklenir.
+- **Aktarım:** PDF Düzenleyici üst çubuğunda "OCR'a gönder" (düzenlemelerle birlikte) → OCR Stüdyo'da yeni iş. OCR Stüdyo'da "PDF Düzenleyici'de aç": *Aranabilir PDF olarak* (OCR metni seçilebilir; PDF Düzenleyici'de metin düzenlenir) ya da *Özgün dosya(lar)*. PDF Düzenleyici'de açık belge varsa "Yeni belge / Sonuna ekle" sorulur. OCR'dan kaydedilen her PDF'te "PDF Düzenleyici'de aç" bildirimi.
+- **Temalar:** Sistem, Açık, Kâğıt, Orman, Koyu, Gece mavisi, Grafit, Mürdüm — ikisine birden uygulanır, hatırlanır.
+- Kaydet: "Farklı kaydet" penceresi kabuktan açılır (çerçeve içinde de çalışır); açılmazsa indirme.
+- Uygulamalar şuradan alınır: Milli Emlak içinde Milli Emlak'ın modülleri (yerel dosyada gömülü), tek başına açılınca GitHub.
+
+
 ## 2.3 (30.10.2026)
 - Düzenlerken kelimeye **çift tık** kelimeyi seçer (önceden imleç sona atlıyordu).
 - **Çizgiler** kapalıyken köşe ve taşıma (✥) noktaları da gizlenir; taşıma yön tuşlarıyla sürer.
