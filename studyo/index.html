@@ -111,7 +111,7 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 <script>
 (function(){
 'use strict';
-var SURUM='1.0';
+var SURUM='1.1';
 var AD={pdf:'PDF Düzenleyici',ocr:'OCR Stüdyo'};
 var REPO={pdf:'pdf-duzenleyici',ocr:'ocr-studyo'};
 var BASLIK={pdf:/<title>\s*PDF Düzenleyici/i,ocr:/<title>\s*OCR Stüdyo/i};
@@ -189,7 +189,8 @@ pdf:'<script>(function(){var P=parent;'+
     'ekle:async function(l){var fs=l.map(function(x){return new File([x.blob],x.ad,{type:x.tip||x.blob.type||"application/pdf"})});await Docs.ekle(fs)},'+
     'tost:function(m,t){toast(m,t)}'+
   '};'+
-  'var _kd=Kaydet.dosya;Kaydet.dosya=async function(ad,veri,mime){try{if(P.BS&&P.BS.kaydet)return await P.BS.kaydet(ad,veri,mime)}catch(e){}return _kd.apply(this,arguments)};'+
+  'var _tk=toast;toast=function(m){if(window.__bsSus&&/^Kaydedildi/.test(m)){window.__bsSus=0;return}return _tk.apply(this,arguments)};'+
+  'var _kd=Kaydet.dosya;Kaydet.dosya=async function(ad,veri,mime){try{if(P.BS&&P.BS.kaydet){var r=await P.BS.kaydet(ad,veri,mime);if(r==="indir"){window.__bsSus=1;setTimeout(function(){window.__bsSus=0},1500)}return r}}catch(e){}return _kd.apply(this,arguments)};'+
   'function dugme(){var o=document.getElementById("bOpen");if(!o||document.getElementById("bsOcr"))return;var b=document.createElement("button");b.className="btn";b.id="bsOcr";'+
     'b.title="Açık belgeyi OCR Stüdyo\'da metne çevir (Alt+G)";b.innerHTML=\''+SIMGE+'<span class="lbl">OCR\\\'a gönder</span>\';b.onclick=function(){P.BS.aktar("pdf")};o.parentNode.insertBefore(b,o)}'+
   'dugme();new MutationObserver(dugme).observe(document.body,{childList:true,subtree:true});'+
@@ -257,13 +258,27 @@ async function pdfeGonder(liste){var w=await bekle('pdf');var n=0;try{n=w.__bs.s
       {ic:IC_EKLE,ad:'Açık belgenin sonuna ekle',alt:'Sayfalar mevcut belgeye eklenir'}]);
     if(c<0)return;if(c===0){var u=U.pdf;try{u.f.remove()}catch(e){}u.f=null;u.p=null;u.hazir=false;w=await bekle('pdf')}}
   git('pdf');await w.__bs.ekle(liste)}
+function indirCubugu(ad,blob){var e=document.getElementById('bsIndir');if(e)e.remove();var u=URL.createObjectURL(blob);
+  e=document.createElement('div');e.id='bsIndir';e.setAttribute('style','position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:2147483000;display:flex;align-items:center;gap:10px;flex-wrap:wrap;max-width:calc(100% - 24px);background:#1f2937;color:#fff;border-radius:14px;padding:10px 12px 10px 16px;box-shadow:0 10px 30px rgba(0,0,0,.35);font:14px/1.35 system-ui,-apple-system,Segoe UI,sans-serif');
+  var st='display:inline-flex;align-items:center;padding:8px 14px;border-radius:10px;font-weight:700;text-decoration:none;cursor:pointer;border:0;font:inherit;font-weight:700';
+  e.innerHTML='<span style="flex:1;min-width:160px">İndirildi: <b>'+String(ad).replace(/</g,'&lt;')+'</b><br><small style="opacity:.75">İndirilenler klasöründe yoksa:</small></span>'+
+    '<a id="bsIndirA" style="'+st+';background:#4ade80;color:#05290f">İndir</a><a id="bsIndirAc" target="_blank" rel="noopener" style="'+st+';background:#334155;color:#fff">Aç</a><button id="bsIndirX" style="'+st+';background:transparent;color:#cbd5e1;padding:8px 10px" title="Kapat">✕</button>';
+  document.body.appendChild(e);var a=e.querySelector('#bsIndirA');a.href=u;a.download=ad;e.querySelector('#bsIndirAc').href=u;
+  var kapat=function(){e.remove();setTimeout(function(){URL.revokeObjectURL(u)},60000)};e.querySelector('#bsIndirX').onclick=kapat;var z=setTimeout(kapat,45000);e.onmouseenter=function(){clearTimeout(z)}}
 var BS=window.BS={surum:SURUM,git:git,temaUygula:temaUygula,
   tamEkran:function(ac){var d=document;if(ac===false||(ac!==true&&d.fullscreenElement)){return d.exitFullscreen?d.exitFullscreen().catch(function(){}):Promise.resolve()}
     var e=d.documentElement;return (e.requestFullscreen?e.requestFullscreen({navigationUI:'hide'}):Promise.resolve()).catch(function(){})},
+  /* 1.1: kaydetme — Milli Emlak (Apps Script) gibi iç içe çerçevelerde "Farklı kaydet" penceresi açılamaz ve
+     başarısız deneme dokunuş iznini harcar; indirme sessizce engellenir, "Kaydedildi" yazar ama dosya gelmezdi.
+     Artık: pencere yalnız en üst pencerede denenir; indirme, erişilebilen EN ÜST pencereden (Milli Emlak'ın kendi
+     indirmelerinin çalıştığı yer) yapılır; ayrıca ekranda "İndir · Aç" çubuğu kalır (indirme gelmezse elle). */
   kaydet:async function(ad,veri,mime){var blob=new Blob([veri],{type:mime||(veri&&veri.type)||'application/octet-stream'});
-    if(window.showSaveFilePicker){try{var ext=ad.split('.').pop(),acc={};acc[blob.type||'application/octet-stream']=['.'+ext];var h=await showSaveFilePicker({suggestedName:ad,types:[{description:ext.toUpperCase(),accept:acc}]});var wr=await h.createWritable();await wr.write(blob);await wr.close();return true}
+    if(window.showSaveFilePicker&&window.top===window){try{var ext=ad.split('.').pop(),acc={};acc[blob.type||'application/octet-stream']=['.'+ext];var h=await showSaveFilePicker({suggestedName:ad,types:[{description:ext.toUpperCase(),accept:acc}]});var wr=await h.createWritable();await wr.write(blob);await wr.close();return true}
       catch(e){if(e&&e.name==='AbortError')return false}}
-    var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=ad;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(a.href)},60000);return true},
+    var w=window;try{while(w.parent&&w.parent!==w){var p=w.parent;void p.document.body;w=p}}catch(e){}
+    var ok=false;try{var b2=new w.Blob([blob],{type:blob.type}),u=w.URL.createObjectURL(b2),a=w.document.createElement('a');a.href=u;a.download=ad;a.style.display='none';w.document.body.appendChild(a);a.click();a.remove();setTimeout(function(){try{w.URL.revokeObjectURL(u)}catch(e){}},120000);ok=true}catch(e){}
+    if(!ok){var a2=document.createElement('a');a2.href=URL.createObjectURL(blob);a2.download=ad;document.body.appendChild(a2);a2.click();a2.remove()}
+    indirCubugu(ad,blob);window.__bsIndirildi=Date.now();return 'indir'},
   ocrdanPdf:function(liste){return pdfeGonder(liste).catch(function(e){tost('Aktarılamadı: '+(e&&e.message||e),'err',5000)})},
   aktar:async function(kaynakU,btn){kaynakU=kaynakU||aktif;
     try{if(kaynakU==='pdf'){var w=await bekle('pdf');if(!w.__bs.sayfa()){w.__bs.tost('Önce bir PDF ya da görsel aç','err');return}

@@ -1,5 +1,9 @@
 # PDF Düzenleyici
 
+## Belge Stüdyosu 1.1 (20.11.2026) — kaydetme düzeltmesi
+- Milli Emlak (Apps Script) gibi iç içe çerçevelerde **İndir / Kaydet** "Kaydedildi" deyip dosya vermiyordu. Artık "Farklı kaydet" penceresi yalnız uygulama en üst penceredeyken denenir (iç çerçevede başarısız deneme dokunuş iznini harcıyordu); indirme erişilebilen **en üst pencereden** yapılır.
+- Her indirmeden sonra ekranda **İndir · Aç** çubuğu (45 sn; üzerine gelince kalır): dosya inmediyse *İndir*'e dokun ya da *Aç* ile yeni sekmede açıp oradan kaydet/paylaş. Yanıltıcı "Kaydedildi" bildirimi yerine "İndirildi".
+
 ## Belge Stüdyosu 1.0 (01.11.2026) — PDF Düzenleyici + OCR Stüdyo tek pencerede (`studyo/`)
 Adres: https://aaskinkk-cloud.github.io/pdf-duzenleyici/studyo/ · Milli Emlak'ta "PDF Düzenleyici" ve "OCR Stüdyo" menüleri bunu açar (158+).
 - İki uygulama kendi çerçevesinde **hiç değiştirilmeden** çalışır; tüm işlevler aynen. İkisi de açık kalır, geçişte iş kaybolmaz.
